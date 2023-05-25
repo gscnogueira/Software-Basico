@@ -1,3 +1,4 @@
+
 SECTION TEXT
 INPUT OLD_DATA           ; old_data = input
 LOAD OLD_DATA            ; acc = old_data
