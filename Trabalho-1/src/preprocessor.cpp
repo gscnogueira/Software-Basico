@@ -18,16 +18,19 @@ int prePocessorFile(std::string file){
 
 	while(std::getline(fin, line)){
         
+		size_t posComment = line.find(';');
+		if(posComment != std::string::npos)	
+			line = line.substr(0,posComment);
+
 		// transforma todos os caracteres da linha em maiusculo
 		for(int i = 0; line[i] != '\0';++i)
 			line[i] = (line[i] >= 'a' && line[i] <= 'z') ? line[i]-32 : line[i];
 		
 		// retirar o rotulo se tiver da linha para poder tratar somente a instrução
-		size_t pos = line.find(':');
-		if (pos != std::string::npos) {
-        	std::string rotulo = line.substr(0, pos+1);	
-			line = line.substr(pos+1);
-			Buffer.push_back(rotulo);
+		size_t posRotulo = line.find(':');
+		if (posRotulo != std::string::npos) {
+			Buffer.push_back(line.substr(0, posRotulo+1));
+			line = line.substr(posRotulo+1);
 		}
 
 		// trata os tipos de instruções e diretivas

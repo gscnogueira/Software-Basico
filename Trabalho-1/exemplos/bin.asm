@@ -1,21 +1,21 @@
 
-SECTION TEXT
-INPUT OLD_DATA
-LOAD OLD_DATA
-L1: DIV DOIS
-STORE  NEW_DATA
-MUL DOIS
-STORE TMP_DATA
-LOAD OLD_DATA
-SUB TMP_DATA
-STORE TMP_DATA
-OUTPUT TMP_DATA
-COPY NEW_DATA , OLD_DATA
-LOAD OLD_DATA
-JMPP L1
-STOP
-SECTION DATA
-DOIS: CONST 2
-OLD_DATA: SPACE
-NEW_DATA: SPACE
-TMP_DATA: SPACE
+SECTION TEXT ;comentario papi
+INPUT OLD_DATA ;comentario papi
+LOAD OLD_DATA ;comentario papi
+L1: DIV DOIS ;comentario papi
+STORE NEW_DATA ;comentario papi
+MUL DOIS ;comentario papi
+STORE TMP_DATA ;comentario papi
+LOAD OLD_DATA ;comentario papi
+SUB TMP_DATA ;comentario papi
+STORE TMP_DATA ;comentario papi
+OUTPUT TMP_DATA ;comentario papi
+COPY NEW_DATA , OLD_DATA ;comentario papi
+LOAD OLD_DATA ;comentario papi
+JMPP L1 ;comentario papi
+STOP ;comentario papi
+SECTION DATA ;comentario papi
+DOIS: CONST 2 ;comentario papi
+OLD_DATA: SPACE ;comentario papi
+NEW_DATA: SPACE ;comentario papi
+TMP_DATA: SPACE ;comentario papi
