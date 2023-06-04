@@ -3,7 +3,7 @@ BINARY=ligador
 INCDIR=./includes
 CODEDIR=./src
 OBJDIR=./obj
-DEBUG=true
+DEBUG=false
 CFILES=$(wildcard $(CODEDIR)/*.cpp)
 OBJFILES=$(patsubst $(CODEDIR)/%.cpp,$(OBJDIR)/%.o,$(CFILES))
 FLAGS= -std=c++17 -Wall -I$(INCDIR)
