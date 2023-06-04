@@ -2,7 +2,8 @@
 SECTION TEXT
 INPUT OLD_DATA           ; old_data = input
 LOAD OLD_DATA            ; acc = old_data
-L1: DIV DOIS             ; acc = old_data/2
+L1: 
+DIV DOIS             ; acc = old_data/2
 STORE  NEW_DATA          ; new_data = acc = old_data/2
 MUL DOIS                 ; acc = (old_data/2)*2
 STORE TMP_DATA           ; tmp_data = old_data/2*2

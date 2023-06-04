@@ -1,5 +1,9 @@
 #pragma once
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <stdexcept>
 
-int prePocessorFile(std::string file);
-
+void pre_processor_file(std::string file);
 

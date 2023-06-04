@@ -1,40 +1,61 @@
-#include <scanner.hpp>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#include "scanner.hpp"
+#include "lexererror.hpp"
 
-void Scanner::scan(std::string f_name){
-	std::ifstream input(f_name);
-	std::string content;
-	std::cout<<"rapaaaaz"<<std::endl;
-	if(input.is_open()){
-		while(std::getline(input, content)){
-			std::cout<<content.size()<<" "+ content<<std::endl;
-		}
-	}
-	else {
-		std::cout<<"Falha ao abrir o arquivo"<<std::endl;
+
+std::set<std::string> validKeywords = {
+    "COPY", "ADD", "SECTION", "SUB", "SPACE", "CONST",
+	"INPUT","TEXT","LOAD", "DIV", "MUL", "STORE", "STOP",
+	"JMPP","JMPZ","JMPN",",","DATA","EXTERN:","PUBLIC","OUTPUT","BEGIN","END"
+};
+
+bool process_elem_id(int cont,char element){
+	if(cont == 0){
+		return (element >= 'A' && element <= 'Z')||element == '_';
+	} else{
+		return (element >= 'A' && element <= 'Z')||element == '_'||(element >= '0' && element <= '9');
 	}
 }
 
-std::string Scanner::pop(int n){
-	std::cout<<"rapaaaaz"<<std::endl;
+bool is_identifier(int cont,std::string id){
+	if(cont == static_cast<int>(id.size())-1){ 
+		return ((id[cont] == ':'&&cont > 0)||process_elem_id(cont,id[cont]));
+	} 
+	
+	return process_elem_id(cont,id[cont]) && is_identifier(++cont,id); 
 }
 
-std::vector<std::string> scan_line(std::string line){
+bool is_reserved_key_word(std::string key){
+	return validKeywords.count(key);
+}
 
-	std::string token;
-	std::vector<std::string> tokens;
+bool is_constant(int cont,std::string number){
+	if(cont > static_cast<int>(number.size())-1)
+		return false;
+
+	if(static_cast<int>(number.size())-1 == cont)
+		return true;
+	
+	return (((number[0] == '-'||number[0] == '+')&&!cont)||(number[cont] >= '0' && number[cont] <= '9')) && is_constant(++cont,number);
+}
+
+std::vector<Token> scan_line(std::string line){
+
+	std::vector<Token> tokens;
 	std::stringstream ss(line);
-
-	while(ss>>token)
+	std::string lexeme;
+	while(ss >> lexeme){
+		Token token;
+		token.lexeme = lexeme;
+		if(is_reserved_key_word(token.lexeme)){
+			token.type = Token::ReservedKeyWord;
+		} else if((token.lexeme[0]=='0'&&token.lexeme[1]=='x'&&is_constant(2,token.lexeme))||is_constant(0,token.lexeme)){
+			token.type = Token::Constant;
+		} else if(is_identifier(0,token.lexeme)){
+			token.type = Token::Identifier;
+		} else{
+			throw LexerErro("Erro na analise lexica");
+		}
 		tokens.push_back(token);
-
-	// analisar tokens
-	// verificar se o primeiro é um rótulo 
-	// Analisar os outros tokens
-
+	}
 	return tokens;
 }
-
-

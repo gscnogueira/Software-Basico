@@ -1,11 +1,7 @@
 #pragma once
+#include "scanner.hpp"
+#include "sintaxerror.hpp"
 
-struct Line {
-	enum Type {Instrucao, Diretiva};
-	int label;
-};
-
-Line parse_line(std::vector<std::string>){
-        
-}
+bool not_is_identifier_operand(Token);
+void parse_line(std::string);
 

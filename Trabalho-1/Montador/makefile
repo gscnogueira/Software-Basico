@@ -12,7 +12,7 @@ FLAGS= -std=c++17 -Wall -I$(INCDIR) -g
 # <build rule> : <dependencias necessarias para a build rule ser executada>
 #	comando a ser executado
 
-$(BINARY): main.o preprocessor.o scanner.o parser.o
+$(BINARY): main.o preprocessor.o scanner.o parser.o lexererror.o sintaxerror.o
 	$(CC) -o $@ $^
 
 main.o: src/main.cpp
@@ -26,6 +26,12 @@ scanner.o: src/scanner.cpp
 
 parser.o: src/parser.cpp
 	$(CC)  $(FLAGS) -c src/parser.cpp
+
+lexererror.o: src/lexererror.cpp
+	$(CC) $(FLAGS) -c src/lexererror.cpp
+
+sintaxerror.o: src/sintaxerror.cpp
+	$(CC) $(FLAGS) -c src/sintaxerror.cpp
 
 run: $(BINARY)
 	./montador bin
