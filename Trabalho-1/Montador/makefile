@@ -1,37 +1,30 @@
 CC=g++
-
 BINARY=montador
+INCDIR=./includes
+CODEDIR=./src
+OBJDIR=./obj
+DEBUG=false
+CFILES=$(wildcard $(CODEDIR)/*.cpp)
+OBJFILES=$(patsubst $(CODEDIR)/%.cpp,$(OBJDIR)/%.o,$(CFILES))
+FLAGS= -std=c++17 -Wall -I$(INCDIR)
 
-INCDIR=./includes # diretórios que contem arquivos .hpp
+$(shell mkdir -p $(OBJDIR))
 
-CODEDIRS= ./src
+ifeq ($(DEBUG),true)
+	FLAGS += -g
+endif
 
-FLAGS= -std=c++17 -Wall -I$(INCDIR) -g
+all: $(BINARY)
 
-# O Makefile é composto pela seguinte estrutura
-# <build rule> : <dependencias necessarias para a build rule ser executada>
-#	comando a ser executado
+$(BINARY):$(OBJFILES)
+	$(CC) $(FLAGS) -o $@ $^
 
-$(BINARY): main.o preprocessor.o scanner.o parser.o lexererror.o sintaxerror.o
-	$(CC) -o $@ $^
-
-main.o: src/main.cpp
-	$(CC) $(FLAGS) -c src/main.cpp
-
-preprocessor.o: src/preprocessor.cpp
-	$(CC)  $(FLAGS) -c src/preprocessor.cpp
-
-scanner.o: src/scanner.cpp
-	$(CC)  $(FLAGS) -c src/scanner.cpp
-
-parser.o: src/parser.cpp
-	$(CC)  $(FLAGS) -c src/parser.cpp
-
-lexererror.o: src/lexererror.cpp
-	$(CC) $(FLAGS) -c src/lexererror.cpp
-
-sintaxerror.o: src/sintaxerror.cpp
-	$(CC) $(FLAGS) -c src/sintaxerror.cpp
+obj/%.o:$(CODEDIR)/%.cpp
+	$(CC) $(FLAGS) -c $^ -o $@
 
 run: $(BINARY)
 	./montador bin
+
+clear:
+	rm $(OBJFILES)
+

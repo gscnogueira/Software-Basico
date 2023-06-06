@@ -5,6 +5,7 @@
 #include <set>
 #include <sstream>
 #include <unordered_map>
+#include <errors.hpp>
 
 struct Token {
     enum TokenType {
