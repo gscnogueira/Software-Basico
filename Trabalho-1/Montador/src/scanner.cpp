@@ -3,9 +3,9 @@
 
 
 std::set<std::string> validKeywords = {
-    "COPY", "ADD", "SECTION", "SUB", "SPACE", "CONST",
-	"INPUT","TEXT","LOAD", "DIV", "MUL", "STORE", "STOP",
-	"JMPP","JMPZ","JMPN",",","DATA","EXTERN:","PUBLIC","OUTPUT","BEGIN","END"
+    "COPY", "ADD","SECTION","SUB","SPACE","CONST","INPUT",
+	"TEXT","LOAD","DIV","MUL","STORE","STOP","JMPP","JMPZ",
+	"JMPN","DATA","EXTERN:","PUBLIC","OUTPUT","BEGIN","END"
 };
 
 bool process_elem_id(int cont,char element){
@@ -48,7 +48,9 @@ std::vector<Token> scan_line(std::string line){
 		token.lexeme = lexeme;
 		if(is_reserved_key_word(token.lexeme)){
 			token.type = Token::ReservedKeyWord;
-		} else if((token.lexeme[0]=='0'&&token.lexeme[1]=='x'&&is_constant(2,token.lexeme))||is_constant(0,token.lexeme)){
+		} else if(token.lexeme == ","){
+			token.type = Token::Delimiter;
+		} else if(is_constant(0,token.lexeme)||(token.lexeme[0]=='0'&&token.lexeme[1]=='x'&&is_constant(2,token.lexeme))){
 			token.type = Token::Constant;
 		} else if(is_identifier(0,token.lexeme)){
 			token.type = Token::Identifier;

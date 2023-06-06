@@ -8,7 +8,7 @@
 
 struct Token {
     enum TokenType {
-        Identifier,ReservedKeyWord,Constant
+        Identifier,ReservedKeyWord,Constant,Delimiter
 	};
     TokenType type;
 	std::string lexeme;
