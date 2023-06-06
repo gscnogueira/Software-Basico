@@ -1,5 +1,4 @@
 #include "scanner.hpp"
-#include "lexererror.hpp"
 
 
 std::set<std::string> validKeywords = {
@@ -53,7 +52,7 @@ std::vector<Token> scan_line(std::string line){
 		} else if(is_identifier(0,token.lexeme)){
 			token.type = Token::Identifier;
 		} else{
-			throw LexerErro("Erro na analise lexica");
+		  throw AssemblerError("Erro na analise Léxica", "Léxico");
 		}
 		tokens.push_back(token);
 	}
