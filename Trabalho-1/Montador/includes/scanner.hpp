@@ -12,7 +12,7 @@ struct Token {
         Identifier,ReservedKeyWord,Constant,Delimiter
 	};
     TokenType type;
-	std::string lexeme;
+	std::string text;
 };
 
 std::vector<Token> scan_line(std::string line);
