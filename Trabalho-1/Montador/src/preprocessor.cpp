@@ -33,7 +33,7 @@ void pre_processor_file(std::string file){
 		std::string token;
 
 		while(iss >> token) Buffer.push_back(token);
-
+		if(Buffer.empty()) fout.put('\n');
 		if(!Buffer.empty()){
 			int limit = Buffer.size();
 			for(int i = 0; i < limit;++i){

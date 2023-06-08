@@ -5,7 +5,7 @@ std::set<std::string> validInstructionsOneOperand = {
 };
 
 bool is_identifier_op(Token token){
-	return token.type == 0||token.text[token.text.size()-1] != ':';
+	return token.type == 0&&token.text[token.text.size()-1] != ':';
 }
 
 bool assert_copy(int i,int limit,std::vector<Token> tokens){
@@ -127,7 +127,8 @@ Line parse_line(std::string line){
   std::string label;
   int labels = 0;
   Token cmd;
-  for(int i = 0;i < limit;++i){
+  int i = 0;
+  for(i = 0;i < limit;++i){
     if(labels >= 2){
       throw AssemblerError("Mais de uma label na linha", "Sintático");
     }
@@ -141,8 +142,8 @@ Line parse_line(std::string line){
     process_line(i,limit,tokens);
     break;
   }
+  
+  std::vector<Token> args(tokens.begin()+i+1, tokens.end());
 
-  std::vector<Token> args(tokens.begin()+1, tokens.end());
-
-  return Line(label, cmd,args);
+  return Line(label,cmd,args);
 }
