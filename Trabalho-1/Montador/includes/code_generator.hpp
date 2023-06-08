@@ -1,6 +1,7 @@
 # pragma once
 #include <map>
 #include <string>
+#include <fstream>
 #include <parser.hpp>
 #include <errors.hpp>
 
@@ -29,6 +30,7 @@ struct Program {
     Program(std::string name):name(name){}
 
     void gen_code(Line line);
+    void write();
 
 private:
     void process_instruction(Line line);

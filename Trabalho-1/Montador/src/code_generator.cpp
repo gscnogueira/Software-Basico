@@ -89,6 +89,16 @@ void Program::process_space(Line line){
         code.push_back(0);
 }
 
-void Program::process_const(Line line){}
+void Program::process_const(Line line){
+    int const_n = stoi(line.args[0].text);
+    code.push_back(const_n);
+}
 void Program::process_extern(Line line){}
 void Program::process_section(Line line){}
+
+void Program::write(){
+    std::string file_name = name + ".exc";
+    std::ofstream output_file(file_name);
+    for (auto e: code)
+        output_file << e << " ";
+}

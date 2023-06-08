@@ -30,7 +30,7 @@ int main(int argc, char** argv){
                 prog.gen_code(parsed_line);
                 cont_line++;
             }
-
+            prog.write();
         }
     }	
 
