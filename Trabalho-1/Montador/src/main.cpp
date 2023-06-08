@@ -25,7 +25,6 @@ int main(int argc, char** argv){
             pre_processor_file(argv[1]);
             input.open(file_name + "_preprocessor.asm");
             while(getline(input, line)){
-                std::cout << cont_line <<" " +  line<< std::endl;
                 Line parsed_line = parse_line(line);
                 prog.gen_code(parsed_line);
                 cont_line++;
@@ -35,7 +34,7 @@ int main(int argc, char** argv){
     }	
 
     catch (const AssemblerError& e){
-        e.print(file_name, cont_line);
+        e.print(file_name, cont_line,line);
         return 1;
     }
     catch(const std::runtime_error& e){

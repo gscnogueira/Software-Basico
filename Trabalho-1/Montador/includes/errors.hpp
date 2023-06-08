@@ -12,7 +12,7 @@ public:
     return type;
   }
 
-  void print(std::string f_name, unsigned int line) const;
+  void print(std::string f_name, unsigned int line_number, std::string line) const;
 
 private:
   std::string type;

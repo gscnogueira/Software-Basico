@@ -33,9 +33,10 @@ struct Program {
     void write();
 
 private:
+    void resolve_label(std::string label);
     void process_instruction(Line line);
     void process_directive(Line line);
-    int process_identifier(Token token);
+    void process_identifier(Token token);
     void process_space(Line line);
     void process_const(Line line);
     void process_extern(Line line);
