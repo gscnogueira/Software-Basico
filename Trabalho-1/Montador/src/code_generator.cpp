@@ -36,8 +36,9 @@ void Program::gen_code(Line line)
 }
 
 void Program::process_linking_directive(Line line){
-    if (line.cmd.text == "EXTERN:")
+    if (line.cmd.text == "EXTERN:"){
         //process_extern(line);
+	}
     if (line.cmd.text == "PUBLIC")
         process_public(line);
 	else if(line.cmd.text == "BEGIN"){
