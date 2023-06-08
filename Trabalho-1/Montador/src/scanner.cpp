@@ -54,7 +54,7 @@ std::vector<Token> scan_line(std::string line){
 		} else if(is_constant(0,token.text)||(token.text[0]=='0'&&token.text[1]=='x'&&is_constant(2,token.text))){
 			token.type = Token::Constant;
 		} else{
-		  throw AssemblerError("Caracter inválido", "Léxico");
+		  throw AssemblerError("Caractere inválido", "Léxico");
 		}
 		tokens.push_back(token);
 	}
