@@ -16,29 +16,40 @@ void Program::gen_code(Line line)
         symb_table.insert(line.label, code.size());
         resolve_label(line.label);
     }
+    if (line.is_section())
+        process_section(line);
 
     if (line.is_instruction()){
+        if (text_begin==-1)
+            throw AssemblerError("Instrução executada fora da seção TEXT", "Semântico");
         process_instruction(line);
 
     }
-    else if (line.is_directive()){
-        process_directive(line);
+    else if (line.is_data_directive()){
+        if (data_begin==-1 || (data_end != -1 && (int) code.size() > data_end ))
+            throw AssemblerError("Dado definido fora da seção DATA", "Semântico");
+        process_data_directive(line);
     }
 }
 
 void Program::resolve_label(std::string label) {
-     // verifica se simbolo possui lista de pendências;
-     if (symb_table.to_do_list.find(label) == symb_table.to_do_list.end())
-         return ;
+    // verifica se simbolo possui lista de pendências
+    auto it = symb_table.to_do_list.find(label);
 
-     int prox = symb_table.to_do_list[label];
-     int aux;
+    if ( it == symb_table.to_do_list.end() )
+        return ;
 
-     while(prox!=-1){
-         aux = code[prox];
-         code[prox] = symb_table.values[label];
-         prox = aux;
-     }
+    // remove lista de pendencias do simbolo
+    int prox = (*it).second;
+    symb_table.to_do_list.erase(it);
+    int aux;
+
+    // substiui ocorrências 
+    while(prox!=-1){
+        aux = code[prox];
+        code[prox] = symb_table.values[label];
+        prox = aux;
+    }
 }
 
 void Program::process_instruction(Line line){
@@ -78,7 +89,7 @@ void Program::process_identifier(Token token){
     code.push_back(value);
 }
 
-void Program::process_directive(Line line){
+void Program::process_data_directive(Line line){
 
     std::string directive =  line.cmd.text;
 
@@ -88,11 +99,6 @@ void Program::process_directive(Line line){
     if (directive =="CONST")
         process_const(line);
 
-    if (directive == "EXTERN")
-        process_extern(line);
-
-    if (directive == "SECTION")
-        process_section(line);
 }
 
 void Program::process_space(Line line){
@@ -108,11 +114,29 @@ void Program::process_const(Line line){
 
 void Program::process_extern(Line line){}
 
-void Program::process_section(Line line){}
+void Program::process_section(Line line){
+    std::string arg = line.args[0].text;
+    if (arg == "TEXT"){
+        text_begin=code.size();
+        data_end = data_begin == -1 ? -1 : code.size();
+    }
+    else if (arg == "DATA"){
+        data_begin=code.size();
+        text_end = text_begin == -1 ? -1 : code.size();
+    }
+}
 
 void Program::write(){
     std::string file_name = name + ".exc";
     std::ofstream output_file(file_name);
     for (auto e: code)
         output_file << e << " ";
+}
+
+void Program::check_pendencies(){
+    for (auto e : symb_table.to_do_list){
+        std::string msg = e.first + " não foi definido" ;
+        throw AssemblerError(msg, "Semântico");
+    }
+
 }

@@ -19,7 +19,6 @@ struct SymbolTable {
     void insert(std::string symbol, unsigned int value);
 
 };
-
 struct Program {
     std::string name;
     SymbolTable symb_table;
@@ -27,15 +26,21 @@ struct Program {
     use_table_t use_table = {};
     std::vector<int> code;
 
+    int text_end = -1;
+    int text_begin = -1;
+    int data_end = -1;
+    int data_begin = -1;
+
     Program(std::string name):name(name){}
 
     void gen_code(Line line);
+    void check_pendencies();
     void write();
 
 private:
     void resolve_label(std::string label);
     void process_instruction(Line line);
-    void process_directive(Line line);
+    void process_data_directive(Line line);
     void process_identifier(Token token);
     void process_space(Line line);
     void process_const(Line line);

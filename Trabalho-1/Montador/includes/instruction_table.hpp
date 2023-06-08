@@ -20,12 +20,7 @@ const std::map<std::string, unsigned int8_t> INSTRUCTION_TABLE= {
     {"STOP"   , 14},
 };
 
-const std::set<std::string> DIRECTIVES_TABLE= {
+const std::set<std::string> DATA_DIRECTIVES_TABLE= {
     "SPACE",
     "CONST",
-    "EXTERN:",
-    "PUBLIC",
-    "SECTION",
-	"BEGIN",
-	"END"
 };

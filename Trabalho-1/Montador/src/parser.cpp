@@ -57,9 +57,13 @@ bool Line::has_label_declaration() const{
     return label!="";
 }
 
-bool Line::is_directive() const{
-    return DIRECTIVES_TABLE.count(cmd.text);
+bool Line::is_data_directive() const{
+    return DATA_DIRECTIVES_TABLE.count(cmd.text);
 }
+bool Line::is_section() const {
+    return cmd.text == "SECTION";
+}
+bool Line::is_linking_directive() const {};
 
 bool not_is_identifier_operand(Token token){
 	return token.type != 0||token.text[token.text.size()-1] == ':';

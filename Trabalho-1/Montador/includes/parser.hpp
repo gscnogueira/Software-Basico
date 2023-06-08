@@ -11,7 +11,9 @@ struct Line {
        Token cmd,
        std::vector<Token> args): label(label), cmd(cmd), args(args) {}
   bool is_instruction() const;
-  bool is_directive() const;
+  bool is_data_directive() const;
+  bool is_section() const;
+  bool is_linking_directive() const;
   bool has_label_declaration() const;
 };
 
