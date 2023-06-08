@@ -30,6 +30,7 @@ int main(int argc, char** argv){
                 cont_line++;
             }
             prog.check_pendencies();
+			prog.check_directives();
             prog.write();
         }
     }	

@@ -26,6 +26,9 @@ struct Program {
     use_table_t use_table = {};
     std::vector<int> code;
 
+	bool has_begin = false;
+	bool has_end = false;
+	bool has_directive = false;
     int text_end = -1;
     int text_begin = -1;
     int data_end = -1;
@@ -35,6 +38,7 @@ struct Program {
 
     void gen_code(Line line);
     void check_pendencies();
+	 void check_directives();
     void write();
 
 private:
