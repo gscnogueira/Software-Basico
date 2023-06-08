@@ -143,8 +143,6 @@ Line parse_line(std::string line){
     process_line(i,limit,tokens);
     break;
   }
-
-	tokens.size();
 	std::vector<Token> args(tokens.begin()+i+1, tokens.end());
 
   return Line(label,cmd,args);

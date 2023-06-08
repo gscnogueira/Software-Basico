@@ -37,7 +37,9 @@ void pre_processor_file(std::string file){
 		if(!Buffer.empty()){
 			int limit = Buffer.size();
 			for(int i = 0; i < limit;++i){
-				if(Buffer[i][1] == 'X' && Buffer[i][0] == '0') Buffer[i][1] = 'x'; 
+				if(Buffer[i][1] == 'X' && Buffer[i][0] == '0'){
+					Buffer[i] = std::to_string(std::stol(Buffer[i].substr(2), nullptr, 16));
+				}
 				fout << Buffer[i];
 				if(i+1 < limit) fout.put(' ');
 			}
