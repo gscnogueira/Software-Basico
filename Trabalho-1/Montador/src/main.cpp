@@ -26,10 +26,11 @@ int main(int argc, char** argv){
             input.open(file_name + "_preprocessor.asm");
             while(getline(input, line)){
                 std::cout << cont_line <<" " +  line<< std::endl;
-                cont_line++;
                 Line parsed_line = parse_line(line);
                 prog.gen_code(parsed_line);
+                cont_line++;
             }
+
         }
     }	
 
