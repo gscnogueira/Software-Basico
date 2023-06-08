@@ -6,7 +6,7 @@
 #include <errors.hpp>
 
 
-typedef std::vector<std::pair<std::string, unsigned int>> use_table_t ;
+typedef std::map<std::string, std::vector<unsigned int>> use_table_t ;
 typedef std::map<std::string, unsigned int> def_table_t ;
 
 

@@ -20,7 +20,7 @@ void Program::gen_code(Line line)
         process_section(line);
 
 
-    if (line.is_instruction()){
+    else if (line.is_instruction()){
         if (text_begin==-1)
             throw AssemblerError("Instrução executada fora da seção TEXT", "Semântico");
         process_instruction(line);
@@ -31,20 +31,27 @@ void Program::gen_code(Line line)
             throw AssemblerError("Dado definido fora da seção DATA", "Semântico");
         process_data_directive(line);
     }
+    else if(line.is_linking_directive())
+        process_linking_directive(line);
 
 }
 
 void Program::process_linking_directive(Line line){
     if (line.cmd.text == "EXTERN:")
-        process_extern(line);
+        //process_extern(line);
     if (line.cmd.text == "PUBLIC")
         process_public(line);
 }
 
 void Program::process_public(Line line){
+    auto arg = line.args[0].text;
+    def_table[arg] = 0;
 }
 
-void Program::process_extern(Line line){}
+void Program::process_extern(Line line){
+    auto arg = line.args[0].text;
+    use_table[arg] = {};
+}
 
 void Program::resolve_label(std::string label) {
     // verifica se simbolo possui lista de pendências
