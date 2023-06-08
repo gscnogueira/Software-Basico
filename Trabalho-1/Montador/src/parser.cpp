@@ -10,6 +10,14 @@ bool Line::is_instruction() const{
     return (it!=INSTRUCTION_TABLE.end());
 }
 
+bool Line::has_label_declaration() const{
+    return label!="";
+}
+
+bool Line::is_directive() const{
+    return DIRECTIVES_TABLE.count(cmd.text);
+}
+
 bool not_is_identifier_operand(Token token){
 	return token.type != 0||token.text[token.text.size()-1] == ':';
 }
@@ -88,8 +96,8 @@ Line parse_line(std::string line){
     break;
   }
 
-  std::string label = tokens[0].type ==tokens.Identifier? tokens[0].text :  "";
-
+  std::string label = tokens[0].type ==tokens[0].Identifier? tokens[0].text :  "";
+  
   auto cmd = label == "" ? tokens[0] : tokens[1];
 
   std::vector<Token> args(tokens.begin()+1, tokens.end());

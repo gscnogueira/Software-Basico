@@ -3,7 +3,7 @@ BINARY=montador
 INCDIR=./includes
 CODEDIR=./src
 OBJDIR=./obj
-DEBUG=false
+DEBUG=true
 CFILES=$(wildcard $(CODEDIR)/*.cpp)
 OBJFILES=$(patsubst $(CODEDIR)/%.cpp,$(OBJDIR)/%.o,$(CFILES))
 FLAGS= -std=c++17 -Wall -I$(INCDIR)

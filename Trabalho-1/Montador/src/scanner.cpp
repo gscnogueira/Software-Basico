@@ -1,11 +1,11 @@
 #include "scanner.hpp"
 
-
 std::set<std::string> validKeywords = {
     "COPY", "ADD","SECTION","SUB","SPACE","CONST","INPUT",
 	"TEXT","LOAD","DIV","MUL","STORE","STOP","JMPP","JMPZ",
 	"JMPN","DATA","EXTERN:","PUBLIC","OUTPUT","BEGIN","END"
 };
+
 
 bool process_elem_id(int cont,char element){
 	if(cont == 0){
