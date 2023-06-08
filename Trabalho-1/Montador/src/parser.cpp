@@ -124,23 +124,23 @@ void process_line(int i,int limit,std::vector<Token> tokens){
 Line parse_line(std::string line){
   auto tokens = scan_line(line);
   int limit = tokens.size();
+  std::string label;
   int labels = 0;
+  Token cmd;
   for(int i = 0;i < limit;++i){
     if(labels >= 2){
       throw AssemblerError("Mais de uma label na linha", "Sintático");
     }
     //pulando as labels das instruções
-    if(tokens[i].text[tokens[i].text.size()-1] == ':'){
+    if(tokens[i].text[tokens[i].text.size()-1] == ':'&&!tokens[i].type){
       ++labels;
+	  label = tokens[i].text;
       continue;
     }
+	cmd = tokens[i];
     process_line(i,limit,tokens);
     break;
   }
-
-  std::string label = tokens[0].type ==tokens[0].Identifier? tokens[0].text :  "";
-  
-  auto cmd = label == "" ? tokens[0] : tokens[1];
 
   std::vector<Token> args(tokens.begin()+1, tokens.end());
 
