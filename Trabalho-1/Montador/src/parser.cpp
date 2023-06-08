@@ -136,6 +136,7 @@ Line parse_line(std::string line){
     if(tokens[i].text[tokens[i].text.size()-1] == ':'&&!tokens[i].type){
       ++labels;
 	  label = tokens[i].text;
+	  label.pop_back();
       continue;
     }
 	cmd = tokens[i];
