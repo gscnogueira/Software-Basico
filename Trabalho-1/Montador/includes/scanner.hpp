@@ -7,12 +7,14 @@
 #include <unordered_map>
 #include <errors.hpp>
 
+
 struct Token {
     enum TokenType {
         Identifier,ReservedKeyWord,Constant,Delimiter
-	};
+    };
     TokenType type;
-	std::string lexeme;
+    std::string text;
+
 };
 
 std::vector<Token> scan_line(std::string line);

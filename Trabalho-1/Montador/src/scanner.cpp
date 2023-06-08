@@ -1,11 +1,11 @@
 #include "scanner.hpp"
 
-
 std::set<std::string> validKeywords = {
     "COPY", "ADD","SECTION","SUB","SPACE","CONST","INPUT","+",
 	"TEXT","LOAD","DIV","MUL","STORE","STOP","JMPP","JMPZ",
 	"JMPN","DATA","EXTERN:","PUBLIC","OUTPUT","BEGIN","END"
 };
+
 
 bool process_elem_id(int cont,char element){
 	if(cont == 0){
@@ -41,17 +41,17 @@ std::vector<Token> scan_line(std::string line){
 
 	std::vector<Token> tokens;
 	std::stringstream ss(line);
-	std::string lexeme;
-	while(ss >> lexeme){
+	std::string text;
+	while(ss >> text){
 		Token token;
-		token.lexeme = lexeme;
-		if(is_reserved_key_word(token.lexeme)){
+		token.text = text;
+		if(is_reserved_key_word(token.text)){
 			token.type = Token::ReservedKeyWord;
-		} else if(token.lexeme == ","){
+		} else if(token.text == ","){
 			token.type = Token::Delimiter;
-		} else if(is_constant(0,token.lexeme)||(token.lexeme[0]=='0'&&token.lexeme[1]=='x'&&is_constant(2,token.lexeme))){
+		} else if(is_constant(0,token.text)||(token.text[0]=='0'&&token.text[1]=='x'&&is_constant(2,token.text))){
 			token.type = Token::Constant;
-		} else if(is_identifier(0,token.lexeme)){
+		} else if(is_identifier(0,token.text)){
 			token.type = Token::Identifier;
 		} else{
 		  throw AssemblerError("Caracter inválido", "Léxico");

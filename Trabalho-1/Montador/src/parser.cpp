@@ -5,28 +5,28 @@ std::set<std::string> validInstructionsOneOperand = {
 };
 
 bool is_identifier_op(Token token){
-	return token.type == 0||token.lexeme[token.lexeme.size()-1] != ':';
+	return token.type == 0||token.text[token.text.size()-1] != ':';
 }
 
 bool assert_copy(int i,int limit,std::vector<Token> tokens){
 	if(
 	limit-i == 4&&is_identifier_op(tokens[i+1])&&
-	tokens[i+2].lexeme == ","&&is_identifier_op(tokens[i+3])
+	tokens[i+2].text == ","&&is_identifier_op(tokens[i+3])
 	){
 		return false;
 	}
 	else if(
-		limit-i == 6&&((is_identifier_op(tokens[i+1])&&tokens[i+2].lexeme == "+"&&
-		tokens[i+3].type == 2&&tokens[i+4].lexeme == ","&&is_identifier_op(tokens[i+5]))||
-		(is_identifier_op(tokens[i+1])&&tokens[i+2].lexeme == ","&&is_identifier_op(tokens[i+3])&&
-		tokens[i+4].lexeme == "+"&&tokens[i+5].type == 2))
+		limit-i == 6&&((is_identifier_op(tokens[i+1])&&tokens[i+2].text == "+"&&
+		tokens[i+3].type == 2&&tokens[i+4].text == ","&&is_identifier_op(tokens[i+5]))||
+		(is_identifier_op(tokens[i+1])&&tokens[i+2].text == ","&&is_identifier_op(tokens[i+3])&&
+		tokens[i+4].text == "+"&&tokens[i+5].type == 2))
 	){
 		return false;
 	}
 	else if(
-		limit-i == 8&&is_identifier_op(tokens[i+1])&&tokens[i+2].lexeme == "+"&&
-		tokens[i+3].type == 2&&tokens[i+4].lexeme == ","&&is_identifier_op(tokens[i+5])&&
-		tokens[i+6].lexeme == "+"&&tokens[i+7].type == 2
+		limit-i == 8&&is_identifier_op(tokens[i+1])&&tokens[i+2].text == "+"&&
+		tokens[i+3].type == 2&&tokens[i+4].text == ","&&is_identifier_op(tokens[i+5])&&
+		tokens[i+6].text == "+"&&tokens[i+7].type == 2
 	){
 		return false;
 	}
@@ -37,39 +37,57 @@ bool assert_inst(int i,int limit,std::vector<Token> tokens){
 	if(limit-i == 2&&is_identifier_op(tokens[i+1])){
 		return false;
 	}
-	if(limit-i == 4&&is_identifier_op(tokens[i+1])&&tokens[i+2].lexeme == "+"&&tokens[i+3].type == 2){
+	if(limit-i == 4&&is_identifier_op(tokens[i+1])&&tokens[i+2].text == "+"&&tokens[i+3].type == 2){
 		return false;
 	}
 	return true;
 }
 
 bool not_is_identifier_op(Token token){
-	return token.type != 0||token.lexeme[token.lexeme.size()-1] == ':';
+	return token.type != 0||token.text[token.text.size()-1] == ':';
+}
+
+bool Line::is_instruction() const{
+    auto text = cmd.text;
+    auto it = INSTRUCTION_TABLE.find(text);
+    return (it!=INSTRUCTION_TABLE.end());
+}
+
+bool Line::has_label_declaration() const{
+    return label!="";
+}
+
+bool Line::is_directive() const{
+    return DIRECTIVES_TABLE.count(cmd.text);
+}
+
+bool not_is_identifier_operand(Token token){
+	return token.type != 0||token.text[token.text.size()-1] == ':';
 }
 
 void process_line(int i,int limit,std::vector<Token> tokens){
-	if(tokens[i].type != 1||tokens[i].lexeme == "+"){
+	if(tokens[i].type != 1||tokens[i].text == "+"){
 	  throw AssemblerError("Começo invalido de instrução", "Sintático");
 	}
-	if(tokens[i].lexeme == "SECTION"){
+	if(tokens[i].text == "SECTION"){
 		// precisa ser seguido da palavra reservada DATA ou TEXT
-		if(limit-i != 2||(tokens[i+1].lexeme != "DATA"&&tokens[i+1].lexeme != "TEXT")){
+		if(limit-i != 2||(tokens[i+1].text != "DATA"&&tokens[i+1].text != "TEXT")){
 		  throw AssemblerError("Erro na diretiva SECTION", "Sintático");
 		}
 	}
-	else if(tokens[i].lexeme == "EXTERN:"){
+	else if(tokens[i].text == "EXTERN:"){
 		// precisa ser seguido de um rotulo sem ser declaração
 		if(limit-i != 2||not_is_identifier_op(tokens[i+1])){
 		  throw AssemblerError("Erro na diretiva EXTERN", "Sintático");
 		}
 	}
-	else if(tokens[i].lexeme == "PUBLIC"){
+	else if(tokens[i].text == "PUBLIC"){
 		// precisa ser seguido de rotulo
 		if(limit-i != 2||not_is_identifier_op(tokens[i+1])){
 		  throw AssemblerError("Erro na diretiva PUBLIC", "Sintático");
 		}
 	}
-	else if(tokens[i].lexeme == "SPACE"){
+	else if(tokens[i].text == "SPACE"){
 		// pode aceitar argumento
 		if(limit-i > 2){
 		  throw AssemblerError("Erro na quantidade de operadores da diretiva SPACE", "Sintático");
@@ -77,25 +95,25 @@ void process_line(int i,int limit,std::vector<Token> tokens){
 		  throw AssemblerError("Erro na constante da diretiva SPACE", "Sintático");
 		}
 	}
-	else if(tokens[i].lexeme == "CONST"){
+	else if(tokens[i].text == "CONST"){
 		// precisa ter uma constante depois
 		if(limit-i != 2||tokens[i+1].type != 2){
 		  throw AssemblerError("Erro na diretiva CONST", "Sintático");
 		}
 	}
-	else if(tokens[i].lexeme == "STOP"){
+	else if(tokens[i].text == "STOP"){
 		// não pode ter nada depois dele
 		if(limit-i != 1){
 		  throw AssemblerError("Erro na instrução stop", "Sintático");
 		}
 	}
-	else if(tokens[i].lexeme == "COPY"){
+	else if(tokens[i].text == "COPY"){
 		if(assert_copy(i,limit,tokens))
 		{
 		  throw AssemblerError("Erro nos operadores da instrução binaria", "Sintático");
 		}
 	}
-	else if(validInstructionsOneOperand.count(tokens[i].lexeme)){
+	else if(validInstructionsOneOperand.count(tokens[i].text)){
 		// aqui eu agrupei as instruções que tem a sintaxe igual
 		if(assert_inst(i,limit,tokens)){
 		  throw AssemblerError("Erro nos operadores da instrução unaria", "Sintático");
@@ -112,12 +130,19 @@ Line parse_line(std::string line){
       throw AssemblerError("Mais de uma label na linha", "Sintático");
     }
     //pulando as labels das instruções
-    if(tokens[i].lexeme[tokens[i].lexeme.size()-1] == ':'){
+    if(tokens[i].text[tokens[i].text.size()-1] == ':'){
       ++labels;
       continue;
     }
     process_line(i,limit,tokens);
     break;
   }
-  return Line(tokens);
+
+  std::string label = tokens[0].type ==tokens[0].Identifier? tokens[0].text :  "";
+  
+  auto cmd = label == "" ? tokens[0] : tokens[1];
+
+  std::vector<Token> args(tokens.begin()+1, tokens.end());
+
+  return Line(label, cmd,args);
 }

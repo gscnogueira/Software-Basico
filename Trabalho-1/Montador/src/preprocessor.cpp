@@ -4,7 +4,7 @@ void pre_processor_file(std::string file){
 	std::string line;
 	std::vector<std::string> Buffer;
 
-	std::ifstream fin("exemplos/"+file+".asm");
+	std::ifstream fin(file+".asm");
 	if (!fin.is_open()) throw std::runtime_error("Falha ao abrir o arquivo de entrada");
 	
 	std::ofstream fout(file+"_preprocessor.asm");
