@@ -4,6 +4,12 @@ std::set<std::string> validInstructionsOneOperand = {
     "ADD","SUB","INPUT","LOAD", "DIV", "MUL", "STORE","JMPP","JMPZ","JMPN","OUTPUT"
 };
 
+bool Line::is_instruction() const{
+    auto text = cmd.text;
+    auto it = INSTRUCTION_TABLE.find(text);
+    return (it!=INSTRUCTION_TABLE.end());
+}
+
 bool not_is_identifier_operand(Token token){
 	return token.type != 0||token.text[token.text.size()-1] == ':';
 }
@@ -81,5 +87,12 @@ Line parse_line(std::string line){
     process_line(i,limit,tokens);
     break;
   }
-  return Line(tokens);
+
+  std::string label = tokens[0].type ==tokens.Identifier? tokens[0].text :  "";
+
+  auto cmd = label == "" ? tokens[0] : tokens[1];
+
+  std::vector<Token> args(tokens.begin()+1, tokens.end());
+
+  return Line(label, cmd,args);
 }
