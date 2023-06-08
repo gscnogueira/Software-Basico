@@ -23,14 +23,14 @@ int main(int argc, char** argv){
 
     for (int i = 1; i<argc; i++){
       file_name = argv[i];
-      cont_line = 0;
+      cont_line = 1;
       pre_processor_file(argv[1]);
       input.open(file_name + "_preprocessor.asm");
       while(getline(input, line)){
 		std::cout << cont_line << "\n";
-		cont_line++;
 		Line parsed_line = parse_line(line);
 		// gen_code(parsed_line)
+		cont_line++;
       }
     }
   }	

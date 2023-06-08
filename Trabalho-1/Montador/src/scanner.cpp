@@ -2,7 +2,7 @@
 
 
 std::set<std::string> validKeywords = {
-    "COPY", "ADD","SECTION","SUB","SPACE","CONST","INPUT",
+    "COPY", "ADD","SECTION","SUB","SPACE","CONST","INPUT","+",
 	"TEXT","LOAD","DIV","MUL","STORE","STOP","JMPP","JMPZ",
 	"JMPN","DATA","EXTERN:","PUBLIC","OUTPUT","BEGIN","END"
 };
@@ -54,7 +54,7 @@ std::vector<Token> scan_line(std::string line){
 		} else if(is_identifier(0,token.lexeme)){
 			token.type = Token::Identifier;
 		} else{
-		  throw AssemblerError("Erro na analise Léxica", "Léxico");
+		  throw AssemblerError("Caracter inválido", "Léxico");
 		}
 		tokens.push_back(token);
 	}
