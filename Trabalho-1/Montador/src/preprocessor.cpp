@@ -21,8 +21,11 @@ void pre_processor_file(std::string file){
 			line[i] = (line[i] >= 'a' && line[i] <= 'z') ? line[i]-32 : line[i];
 		
 		// retirar o rotulo se tiver da linha para poder tratar somente a instrução
-		
+		size_t startPos = line.find_first_not_of(" \t\r\n");
+		line.erase(0, startPos);
+
 		size_t posRotulo = line.find_last_of(':');
+		
 		if (posRotulo != std::string::npos) {
 			fout << line.substr(0, posRotulo+1);
 			fout.put(' ');

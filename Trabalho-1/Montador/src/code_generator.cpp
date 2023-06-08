@@ -135,7 +135,7 @@ void Program::write(){
 
 void Program::check_pendencies(){
     for (auto e : symb_table.to_do_list){
-        std::string msg = e.first + " não foi definido" ;
+		std::string msg = e.first + " não foi definido" ;
         throw AssemblerError(msg, "Semântico");
     }
 
