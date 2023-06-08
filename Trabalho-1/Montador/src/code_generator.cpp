@@ -3,7 +3,7 @@
 
 void SymbolTable::insert(std::string symbol, unsigned int value ){
 
-    if (values.find(symbol) != values.end())
+    if (defined.count(symbol))
         throw AssemblerError("Redefinição do símbolo \""+ symbol + "\"", "Semântico");
 
     values[symbol] = value;
@@ -20,17 +20,16 @@ void Program::gen_code(Line line)
     if (line.is_instruction()){
         process_instruction(line);
 
-        for (auto e : code)
-            std::cout<<e<<" ";
-        std::cout<<std::endl;
-        std::cout<<code.size()<<std::endl;
     }
     else if (line.is_directive()){
-        std::cout<<"Apenas uma diretivazinha ;-;\n";
+        process_directive(line);
     }
 
+    for (auto e : code)
+        std::cout<<e<<" ";
+    std::cout<<std::endl;
+    std::cout<<code.size()<<std::endl;
     std::cout<<"-----"<<std::endl;
-
 }
 
 void Program::process_instruction(Line line){
@@ -45,6 +44,7 @@ void Program::process_instruction(Line line){
             code.push_back(process_identifier(token));
 
 }
+
 
 int Program::process_identifier(Token token){
 
@@ -66,3 +66,29 @@ int Program::process_identifier(Token token){
 }
 
 
+void Program::process_directive(Line line){
+
+    std::string directive =  line.cmd.text;
+
+    if (directive == "SPACE")
+        process_space(line);
+
+    if (directive =="CONST")
+        process_const(line);
+
+    if (directive == "EXTERN")
+        process_extern(line);
+
+    if (directive == "SECTION")
+        process_section(line);
+}
+
+void Program::process_space(Line line){
+    int n_spaces = line.args.size() ? stoi(line.args[0].text) : 1;
+    for (int i = 0; i < n_spaces; i++)
+        code.push_back(0);
+}
+
+void Program::process_const(Line line){}
+void Program::process_extern(Line line){}
+void Program::process_section(Line line){}

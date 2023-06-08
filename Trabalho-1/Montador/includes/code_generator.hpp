@@ -32,7 +32,11 @@ struct Program {
 
 private:
     void process_instruction(Line line);
+    void process_directive(Line line);
     int process_identifier(Token token);
-
+    void process_space(Line line);
+    void process_const(Line line);
+    void process_extern(Line line);
+    void process_section(Line line);
 };
 
