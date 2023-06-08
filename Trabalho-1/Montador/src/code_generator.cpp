@@ -19,7 +19,7 @@ void Program::gen_code(Line line)
     if (line.is_section())
         process_section(line);
 
-    if (line.is_instruction()){
+    else if (line.is_instruction()){
         if (text_begin==-1)
             throw AssemblerError("Instrução executada fora da seção TEXT", "Semântico");
         process_instruction(line);
@@ -30,6 +30,30 @@ void Program::gen_code(Line line)
             throw AssemblerError("Dado definido fora da seção DATA", "Semântico");
         process_data_directive(line);
     }
+
+}
+
+void Program::process_linking_directive(Line line){
+    if (line.cmd.text == "EXTERN:")
+        process_extern(line);
+    else if (line.cmd.text == "PUBLIC")
+        process_public(line);
+	else if(line.cmd.text == "BEGIN"){
+		has_begin = true;
+	}
+	else if(line.cmd.text == "END"){
+		has_end = true;
+	}
+}
+
+void Program::process_public(Line line){
+	if(!has_begin)
+		 throw AssemblerError("Diretiva public sem o begin", "Semântico");
+}
+
+void Program::process_extern(Line line){
+	if(!has_begin)
+		 throw AssemblerError("Diretiva extern sem o begin", "Semântico");
 }
 
 void Program::resolve_label(std::string label) {
@@ -112,7 +136,6 @@ void Program::process_const(Line line){
     code.push_back(const_n);
 }
 
-void Program::process_extern(Line line){}
 
 void Program::process_section(Line line){
     std::string arg = line.args[0].text;
@@ -138,5 +161,20 @@ void Program::check_pendencies(){
 		std::string msg = e.first + " não foi definido" ;
         throw AssemblerError(msg, "Semântico");
     }
+}
 
+void Program::check_section_text(){
+    if( text_begin == -1)
+        throw AssemblerError("Seção TEXT faltante", "Semântico");
+        
+}
+
+void Program::check_status(){
+    check_pendencies();
+    check_section_text();
+	std::cout << has_begin << "\n";
+
+	if(has_begin ^ has_end){
+		throw AssemblerError("Diretiva begin sem o end", "Semântico");
+	}
 }

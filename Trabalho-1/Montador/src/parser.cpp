@@ -1,7 +1,7 @@
 #include <parser.hpp>
 
 std::set<std::string> validInstructionsOneOperand = {
-    "ADD","SUB","INPUT","LOAD", "DIV", "MUL", "STORE","JMPP","JMPZ","JMPN","OUTPUT"
+    "ADD","SUB","INPUT","LOAD", "DIV", "MUL", "STORE","JMPP","JMPZ","JMPN","OUTPUT","JMP"
 };
 
 bool is_identifier_op(Token token){
@@ -63,7 +63,9 @@ bool Line::is_data_directive() const{
 bool Line::is_section() const {
     return cmd.text == "SECTION";
 }
-bool Line::is_linking_directive() const {};
+bool Line::is_linking_directive() const {
+    return cmd.text == "EXTERN:" || cmd.text == "PUBLIC";
+};
 
 bool not_is_identifier_operand(Token token){
 	return token.type != 0||token.text[token.text.size()-1] == ':';
