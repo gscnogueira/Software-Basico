@@ -91,7 +91,7 @@ void process_line(int i,int limit,std::vector<Token> tokens){
 		// pode aceitar argumento
 		if(limit-i > 2){
 		  throw AssemblerError("Erro na quantidade de operadores da diretiva SPACE", "Sintático");
-		} else if(limit-i == 2&&tokens[i+1].type != 2){
+		} else if(limit-i == 2&&(tokens[i+1].type != 2||std::stoi(tokens[i+1].text) <= 0)){
 		  throw AssemblerError("Erro na constante da diretiva SPACE", "Sintático");
 		}
 	}

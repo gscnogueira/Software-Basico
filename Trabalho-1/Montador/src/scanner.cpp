@@ -3,7 +3,7 @@
 std::set<std::string> validKeywords = {
     "COPY", "ADD","SECTION","SUB","SPACE","CONST","INPUT","+",
 	"TEXT","LOAD","DIV","MUL","STORE","STOP","JMPP","JMPZ",
-	"JMPN","DATA","EXTERN:","PUBLIC","OUTPUT","BEGIN","END"
+	"JMPN","DATA","EXTERN:","PUBLIC","OUTPUT","BEGIN","END","JMP"
 };
 
 
@@ -49,10 +49,10 @@ std::vector<Token> scan_line(std::string line){
 			token.type = Token::ReservedKeyWord;
 		} else if(token.text == ","){
 			token.type = Token::Delimiter;
-		} else if(is_constant(0,token.text)||(token.text[0]=='0'&&token.text[1]=='x'&&is_constant(2,token.text))){
-			token.type = Token::Constant;
 		} else if(is_identifier(0,token.text)){
 			token.type = Token::Identifier;
+		} else if(is_constant(0,token.text)||(token.text[0]=='0'&&token.text[1]=='x'&&is_constant(2,token.text))){
+			token.type = Token::Constant;
 		} else{
 		  throw AssemblerError("Caracter inválido", "Léxico");
 		}
