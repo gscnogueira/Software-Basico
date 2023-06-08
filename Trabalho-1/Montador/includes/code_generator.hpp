@@ -6,8 +6,8 @@
 #include <errors.hpp>
 
 
-typedef std::vector<std::pair<std::string, unsigned int>> def_table_t ;
-typedef std::map<std::string, unsigned int> use_table_t ;
+typedef std::vector<std::pair<std::string, unsigned int>> use_table_t ;
+typedef std::map<std::string, unsigned int> def_table_t ;
 
 
 struct SymbolTable {
@@ -34,7 +34,7 @@ struct Program {
     Program(std::string name):name(name){}
 
     void gen_code(Line line);
-    void check_pendencies();
+    void check_status();
     void write();
 
 private:
@@ -45,6 +45,10 @@ private:
     void process_space(Line line);
     void process_const(Line line);
     void process_extern(Line line);
+    void process_public(Line line);
     void process_section(Line line);
+    void process_linking_directive(Line line);
+    void check_pendencies();
+    void check_section_text();
 };
 

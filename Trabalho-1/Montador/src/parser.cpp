@@ -63,7 +63,9 @@ bool Line::is_data_directive() const{
 bool Line::is_section() const {
     return cmd.text == "SECTION";
 }
-bool Line::is_linking_directive() const {};
+bool Line::is_linking_directive() const {
+    return cmd.text == "EXTERN:" || cmd.text == "PUBLIC";
+};
 
 bool not_is_identifier_operand(Token token){
 	return token.type != 0||token.text[token.text.size()-1] == ':';
