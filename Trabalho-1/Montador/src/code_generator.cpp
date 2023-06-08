@@ -30,13 +30,15 @@ void Program::gen_code(Line line)
             throw AssemblerError("Dado definido fora da seção DATA", "Semântico");
         process_data_directive(line);
     }
+    else if(line.is_linking_directive())
+        process_linking_directive(line);
 
 }
 
 void Program::process_linking_directive(Line line){
     if (line.cmd.text == "EXTERN:")
-        process_extern(line);
-    else if (line.cmd.text == "PUBLIC")
+        //process_extern(line);
+    if (line.cmd.text == "PUBLIC")
         process_public(line);
 	else if(line.cmd.text == "BEGIN"){
 		has_begin = true;
@@ -47,13 +49,13 @@ void Program::process_linking_directive(Line line){
 }
 
 void Program::process_public(Line line){
-	if(!has_begin)
-		 throw AssemblerError("Diretiva public sem o begin", "Semântico");
+    auto arg = line.args[0].text;
+    def_table[arg] = 0;
 }
 
 void Program::process_extern(Line line){
-	if(!has_begin)
-		 throw AssemblerError("Diretiva extern sem o begin", "Semântico");
+    auto arg = line.args[0].text;
+    use_table[arg] = {};
 }
 
 void Program::resolve_label(std::string label) {
