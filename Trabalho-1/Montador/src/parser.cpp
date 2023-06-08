@@ -144,7 +144,8 @@ Line parse_line(std::string line){
     break;
   }
 
-  std::vector<Token> args(tokens.begin()+1, tokens.end());
+	tokens.size();
+	std::vector<Token> args(tokens.begin()+i+1, tokens.end());
 
   return Line(label,cmd,args);
 }
