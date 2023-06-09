@@ -64,7 +64,7 @@ bool Line::is_section() const {
     return cmd.text == "SECTION";
 }
 bool Line::is_linking_directive() const {
-    return cmd.text == "EXTERN:" || cmd.text == "PUBLIC";
+    return cmd.text == "EXTERN:" || cmd.text == "PUBLIC"||cmd.text == "BEGIN"||cmd.text == "END";
 };
 
 bool not_is_identifier_operand(Token token){
@@ -91,6 +91,16 @@ void process_line(int i,int limit,std::vector<Token> tokens){
 		// precisa ser seguido de rotulo
 		if(limit-i != 2||not_is_identifier_op(tokens[i+1])){
 		  throw AssemblerError("Erro na diretiva PUBLIC", "Sintático");
+		}
+	}
+	else if(tokens[i].text == "BEGIN"){
+		if(limit-i != 1){
+		  throw AssemblerError("Erro na diretiva BEGIN", "Sintático");
+		}
+	}
+	else if(tokens[i].text == "END"){
+		if(limit-i != 1){
+		  throw AssemblerError("Erro na diretiva END", "Sintático");
 		}
 	}
 	else if(tokens[i].text == "SPACE"){
