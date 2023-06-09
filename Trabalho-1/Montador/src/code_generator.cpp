@@ -98,10 +98,10 @@ void Program::process_instruction(Line line){
     for (int i =0; i < limit;++i){
         if (line.args[i].type == line.args[i].Identifier){
             int index = code.size();
-			process_identifier(line.args[i]);
 			if(i+2 < limit&&line.args[i+1].text == "+"){
 				offset_table[index] = stoi(line.args[i+2].text);
 			}
+			process_identifier(line.args[i]);
 		}
 	}
 }
@@ -114,7 +114,7 @@ void Program::process_identifier(Token token){
     // verifica se o identificador é externo
     if (use_table.find(label) != use_table.end()){
         use_table[label].push_back(code.size());
-        value = 0;
+        value = offset_table[code.size()];
     }
     // se o identificador não está contido na tabela de definições
     else if (not symb_table.defined.count(label)){
