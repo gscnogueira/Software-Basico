@@ -24,19 +24,19 @@ void pre_processor_file(std::string file){
 		size_t startPos = line.find_first_not_of(" \t\r\n");
 		line.erase(0, startPos);
 
-		size_t posRotulo = line.find_last_of(':');
-		
-		if (posRotulo != std::string::npos) {
-			fout << line.substr(0, posRotulo+1);
-			fout.put(' ');
+		size_t posRotulo = line.find(':');
+		while(posRotulo != std::string::npos){
+			fout << line.substr(0,posRotulo+1);
 			line = line.substr(posRotulo+1);
+			fout.put(' ');
+			posRotulo = line.find(':');
 		}
 
 		std::istringstream iss(line);
 		std::string token;
 
 		while(iss >> token) Buffer.push_back(token);
-		if(Buffer.empty()&&!line.empty()) fout.put('\n');
+		
 		if(!Buffer.empty()){
 			int limit = Buffer.size();
 			for(int i = 0; i < limit;++i){

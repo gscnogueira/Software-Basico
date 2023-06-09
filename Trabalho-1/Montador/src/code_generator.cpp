@@ -77,7 +77,7 @@ void Program::resolve_label(std::string label) {
     // substiui ocorrências 
     while(prox!=-1){
         aux = code[prox];
-        code[prox] = symb_table.values[label];
+        code[prox] = symb_table.values[label]+offset_table[prox];
         prox = aux;
     }
 }
@@ -88,11 +88,16 @@ void Program::process_instruction(Line line){
     int opcode = INSTRUCTION_TABLE.find(instruction)->second;
 
     code.push_back(opcode);
-
-    for (auto token : line.args)
-        if (token.type == token.Identifier)
-            process_identifier(token);
-
+	int limit = line.args.size();
+    for (int i =0; i < limit;++i){
+        if (line.args[i].type == line.args[i].Identifier){
+            int index = code.size();
+			process_identifier(line.args[i]);
+			if(i+2 < limit&&line.args[i+1].text == "+"){
+				offset_table[index] = stoi(line.args[i+2].text);
+			}
+		}
+	}
 }
 
 

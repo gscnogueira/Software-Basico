@@ -25,7 +25,7 @@ struct Program {
     def_table_t def_table = {};
     use_table_t use_table = {};
     std::vector<int> code;
-
+	std::map<unsigned int,int> offset_table;
 	bool has_begin = false;
 	bool has_end = false;
     int text_end = -1;
