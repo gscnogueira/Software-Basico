@@ -23,7 +23,7 @@ obj/%.o:$(CODEDIR)/%.cpp
 	$(CC) $(FLAGS) -c $^ -o $@
 
 run:$(BINARY)
-	./ligador exemplos/ex1 exemplos/ex2
+	./ligador mod1 mod2 mod3 mod4
 
 clear:
 	rm $(OBJFILES)
