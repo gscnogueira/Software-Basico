@@ -105,6 +105,11 @@ std::vector<uint> apply_use_table(Module m, def_table g_dt,
   for (auto e : m.tabela_de_uso){
     label = e.first;
     addr = e.second;
+    auto it = g_dt.find(label);
+
+    if(it == g_dt.end())
+        throw LinkerError("Simbolo "+ label +  " não foi definido em nenhum módulo");
+
     code[addr] += g_dt[label];
     corrected[addr]=true;
   }
