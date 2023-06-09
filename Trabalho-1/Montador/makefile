@@ -6,6 +6,7 @@ OBJDIR=./obj
 DEBUG=true
 CFILES=$(wildcard $(CODEDIR)/*.cpp)
 OBJFILES=$(patsubst $(CODEDIR)/%.cpp,$(OBJDIR)/%.o,$(CFILES))
+INCS = $(wildcard $(INCDIR)/*.hpp)
 FLAGS= -std=c++17 -Wall -I$(INCDIR)
 
 $(shell mkdir -p $(OBJDIR))
@@ -19,8 +20,8 @@ all: $(BINARY)
 $(BINARY):$(OBJFILES)
 	$(CC) $(FLAGS) -o $@ $^
 
-obj/%.o:$(CODEDIR)/%.cpp
-	$(CC) $(FLAGS) -c $^ -o $@
+obj/%.o:$(CODEDIR)/%.cpp $(INCS)
+	$(CC) $(FLAGS) -c $< -o $@
 
 run: $(BINARY)
 	./montador bin

@@ -46,20 +46,26 @@ void Program::process_linking_directive(Line line){
 		has_begin = true;
 	}
 	else if(line.cmd.text == "END"){
-		has_end = true;
+        if (not has_begin)
+			throw AssemblerError("Diretiva END não possui BEGIN correspondente", "Semântico");
+        else
+            has_end = true;
 	}
 }
 
 void Program::process_public(Line line){
 	if(!has_begin)
-		 throw AssemblerError("Diretiva public sem o begin", "Semântico");
+		 throw AssemblerError("Diretiva PUBLIC pode ser utilizada apenas em módulos", "Semântico");
+    auto arg = line.args[0].text;
+    def_table[arg] = 0;
+
 }
 
 void Program::process_extern(Line line){
 	if(!has_begin)
-		 throw AssemblerError("Diretiva extern sem o begin", "Semântico");
+		 throw AssemblerError("Diretiva EXTERN pode ser utilizada apenas em módulos", "Semântico");
     auto arg = line.args[0].text;
-    def_table[arg] = 0;
+    use_table.insert({arg, {}});
 }
 
 void Program::resolve_label(std::string label) {
@@ -100,14 +106,18 @@ void Program::process_instruction(Line line){
 	}
 }
 
-
 void Program::process_identifier(Token token){
 
     int value;
     std::string label = token.text;
 
-    // se o identificador não está contido na tabela
-    if (not symb_table.defined.count(label)){
+    // verifica se o identificador é externo
+    if (use_table.find(label) != use_table.end()){
+        use_table[label].push_back(code.size());
+        value = 0;
+    }
+    // se o identificador não está contido na tabela de definições
+    else if (not symb_table.defined.count(label)){
 
         // verifica se já existem pendencias para esse identificador
         if (symb_table.to_do_list.find(label) == symb_table.to_do_list.end())
@@ -117,10 +127,12 @@ void Program::process_identifier(Token token){
         value = symb_table.to_do_list[label];
         symb_table.to_do_list[label] = code.size();
     }
+    // se o identificador está contido na tabela de símbolos
     else {
         value = symb_table.values[token.text];
     }
 
+    relatives.push_back(code.size());
     code.push_back(value);
 }
 
@@ -160,10 +172,62 @@ void Program::process_section(Line line){
 }
 
 void Program::write(){
-    std::string file_name = name + ".exc";
+    if (has_begin and has_end){
+        write_obj();
+    }
+    else {
+        write_exc();
+    }
+}
+
+void Program::write_exc(){
+    std::string file_name;
     std::ofstream output_file(file_name);
+
+    file_name = name + ".exc";
+    output_file.open(file_name);
+
     for (auto e: code)
         output_file << e << " ";
+}
+void Program::write_obj(){
+    std::string file_name;
+    std::ofstream output_file(file_name);
+
+    file_name = name + ".obj";
+    output_file.open(file_name);
+
+    update_def_table();
+
+    output_file<<"USO" << std::endl;
+
+    for (auto e : use_table){
+        std::string symbol = e.first;
+        for (auto addr : e.second)
+            output_file << symbol << " " << addr <<std::endl;
+    }
+
+    output_file<<"DEF" << std::endl;
+
+    for (auto e : def_table)
+        output_file << e.first << " " << e.second <<std::endl;
+
+    output_file<<"RELATIVOS" << std::endl;
+
+    for (auto e : relatives)
+        output_file << e << " ";
+    output_file<<std::endl;
+
+    output_file<<"CODE" << std::endl;
+
+    for (auto e : code)
+        output_file << e << " ";
+    output_file<<std::endl;
+}
+
+void Program::update_def_table(){
+    for (auto& e : def_table)
+        e.second = symb_table.values[e.first];
 }
 
 void Program::check_pendencies(){
@@ -184,8 +248,8 @@ void Program::check_status(){
     check_section_text();
 	if(has_begin ^ has_end){
 		if(has_begin)
-			throw AssemblerError("Diretiva begin sem o end", "Semântico");
+			throw AssemblerError("Diretiva BEGIN não possui END correspondente", "Semântico");
 		else
-			throw AssemblerError("Diretiva end sem o begin", "Semântico");
+			throw AssemblerError("Diretiva END não possui BEGIN correspondente", "Semântico");
 	}
 }
