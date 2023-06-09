@@ -25,6 +25,7 @@ struct Program {
     def_table_t def_table = {};
     use_table_t use_table = {};
     std::vector<int> code;
+    std::vector<int> relatives;
 
 	bool has_begin = false;
 	bool has_end = false;
@@ -52,5 +53,8 @@ private:
     void process_linking_directive(Line line);
     void check_pendencies();
     void check_section_text();
+    void update_def_table();
+    void write_exc();
+    void write_obj();
 };
 

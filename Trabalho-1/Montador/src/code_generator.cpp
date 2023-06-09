@@ -56,6 +56,9 @@ void Program::process_linking_directive(Line line){
 void Program::process_public(Line line){
 	if(!has_begin)
 		 throw AssemblerError("Diretiva PUBLIC pode ser utilizada apenas em módulos", "Semântico");
+    auto arg = line.args[0].text;
+    def_table[arg] = 0;
+
 }
 
 void Program::process_extern(Line line){
@@ -124,6 +127,7 @@ void Program::process_identifier(Token token){
         value = symb_table.values[token.text];
     }
 
+    relatives.push_back(code.size());
     code.push_back(value);
 }
 
@@ -163,10 +167,62 @@ void Program::process_section(Line line){
 }
 
 void Program::write(){
-    std::string file_name = name + ".exc";
+    if (has_begin and has_end){
+        write_obj();
+    }
+    else {
+        write_exc();
+    }
+}
+
+void Program::write_exc(){
+    std::string file_name;
     std::ofstream output_file(file_name);
+
+    file_name = name + ".exc";
+    output_file.open(file_name);
+
     for (auto e: code)
         output_file << e << " ";
+}
+void Program::write_obj(){
+    std::string file_name;
+    std::ofstream output_file(file_name);
+
+    file_name = name + ".obj";
+    output_file.open(file_name);
+
+    update_def_table();
+
+    output_file<<"USO" << std::endl;
+
+    for (auto e : use_table){
+        std::string symbol = e.first;
+        for (auto addr : e.second)
+            output_file << symbol << " " << addr <<std::endl;
+    }
+
+    output_file<<"DEF" << std::endl;
+
+    for (auto e : def_table)
+        output_file << e.first << " " << e.second <<std::endl;
+
+    output_file<<"RELATIVOS" << std::endl;
+
+    for (auto e : relatives)
+        output_file << e << " ";
+    output_file<<std::endl;
+
+    output_file<<"CODE" << std::endl;
+
+    for (auto e : code)
+        output_file << e << " ";
+    output_file<<std::endl;
+}
+
+void Program::update_def_table(){
+    for (auto& e : def_table)
+        e.second = symb_table.values[e.first];
 }
 
 void Program::check_pendencies(){
