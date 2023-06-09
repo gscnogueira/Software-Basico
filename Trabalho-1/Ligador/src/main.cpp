@@ -10,11 +10,17 @@ int main(int argc, char** argv){
     if(argc < 2)
       throw LinkerError("Nenhum arquivo de entrada foi fornecido");
 
-    Module main(argv[1]);
+    std::vector<Module> modules;
 
-    for (int i=2; i < argc; i++){
-      Module aux(argv[i]);
-      main = link(main, aux);
+    for (int i=1; i < argc; i++)
+      modules.push_back(Module(argv[i]));
+
+    auto gdt = gen_global_definition_table(modules);
+
+    Module main = modules[0];
+
+    for (int i = 1; i < argc-1; i++){
+        main = link(main, modules[i], gdt);
     }
 
     main.write_exec();
