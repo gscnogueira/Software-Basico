@@ -79,13 +79,17 @@ void Program::resolve_label(std::string label) {
     int prox = (*it).second;
     symb_table.to_do_list.erase(it);
     int aux;
+    auto label_info = symb_table.to_do_list_info.find(label);
 
     // substiui ocorrências 
     while(prox!=-1){
         aux = code[prox];
         code[prox] = symb_table.values[label]+offset_table[prox];
         prox = aux;
+        label_info->second.pop_back();
     }
+
+    symb_table.to_do_list_info.erase(label_info);
 }
 
 void Program::process_instruction(Line line){
@@ -101,15 +105,15 @@ void Program::process_instruction(Line line){
 			if(i+2 < limit&&line.args[i+1].text == "+"){
 				offset_table[index] = stoi(line.args[i+2].text);
 			}
-			process_identifier(line.args[i]);
+			process_identifier(line.args[i], line.cmd);
 		}
 	}
 }
 
-void Program::process_identifier(Token token){
+void Program::process_identifier(Token id, Token cmd){
 
     int value;
-    std::string label = token.text;
+    std::string label = id.text;
 
     // verifica se o identificador é externo
     if (use_table.find(label) != use_table.end()){
@@ -126,10 +130,11 @@ void Program::process_identifier(Token token){
         // atualiza lista de pendencias
         value = symb_table.to_do_list[label];
         symb_table.to_do_list[label] = code.size();
+        symb_table.to_do_list_info[label].push_back(cmd.text);
     }
     // se o identificador está contido na tabela de símbolos
     else {
-        value = symb_table.values[token.text];
+        value = symb_table.values[label];
     }
 
     relatives.push_back(code.size());
@@ -231,11 +236,23 @@ void Program::update_def_table(){
 }
 
 void Program::check_pendencies(){
-    for (auto e : symb_table.to_do_list){
-		std::string msg = e.first + " não foi definido" ;
-        throw AssemblerError(msg, "Semântico");
+    for (auto e : symb_table.to_do_list_info){
+        auto label = e.first;
+        for (auto instruction : e.second){
+            std::cout<<instruction<<std::endl;
+            bool uses_data = check_uses_data(instruction);
+            std:: string label_type = uses_data ? "Dado " : "Rótulo ";
+            std:: string section_type = uses_data ? "DATA" : "TEXT";
+            std::string msg = label_type + label + " não foi definido na seção "+ section_type ;
+            throw AssemblerError(msg, "Semântico");
+        }
     }
 }
+
+bool Program::check_uses_data(std::string instruction){
+    std::set<std::string> label_instructions = { "JMP", "JMPP", "JMPN", "JMPZ"};
+    return not label_instructions.count(instruction);
+};
 
 void Program::check_section_text(){
     if( text_begin == -1)
