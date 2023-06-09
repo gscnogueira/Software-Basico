@@ -15,6 +15,8 @@ struct SymbolTable {
     std::map<std::string,unsigned int> values = {};
     std::set<std::string> defined = {};
     std::map<std::string,int> to_do_list = {};
+    std::map<std::string,std::vector<std::string>> to_do_list_info = {};
+
 
     void insert(std::string symbol, unsigned int value);
 
@@ -45,15 +47,16 @@ private:
     void resolve_label(std::string label);
     void process_instruction(Line line);
     void process_data_directive(Line line);
-    void process_identifier(Token token);
+    void process_identifier(Token identifier, Token cmd);
     void process_space(Line line);
     void process_const(Line line);
     void process_extern(Line line);
     void process_public(Line line);
     void process_section(Line line);
     void process_linking_directive(Line line);
-    void check_pendencies();
     void check_section_text();
+    void check_pendencies();
+    bool check_uses_data(std::string instruction);
     void update_def_table();
     void write_exc();
     void write_obj();
