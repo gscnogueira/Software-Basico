@@ -15,7 +15,7 @@ struct SymbolTable {
     std::map<std::string,unsigned int> values = {};
     std::set<std::string> defined = {};
     std::map<std::string,int> to_do_list = {};
-    std::map<std::string,std::vector<std::string>> to_do_list_info = {};
+    std::map<std::string,std::vector<std::pair<std::string,int>>> to_do_list_info = {};
 
 
     void insert(std::string symbol, unsigned int value);

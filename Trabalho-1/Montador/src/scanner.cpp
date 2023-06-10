@@ -1,4 +1,5 @@
 #include "scanner.hpp"
+#include "parser.hpp"
 
 std::set<std::string> validKeywords = {
     "COPY", "ADD","SECTION","SUB","SPACE","CONST","INPUT","+",
@@ -54,7 +55,7 @@ std::vector<Token> scan_line(std::string line){
 		} else if(is_constant(0,token.text)){
 			token.type = Token::Constant;
 		} else{
-		  throw AssemblerError("Caractere inválido", "Léxico");
+		  throw AssemblerError("Caractere inválido", "Léxico",Line::cont_line);
 		}
 		tokens.push_back(token);
 	}

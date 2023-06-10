@@ -3,11 +3,12 @@
 #include <fstream>
 #include <code_generator.hpp>
 
+int Line::cont_line = 1;
+
 int main(int argc, char** argv){
 
     std::string line;
     std::string file_name;
-    unsigned int cont_line = 0;
 
     try{
 
@@ -18,8 +19,6 @@ int main(int argc, char** argv){
             throw std::invalid_argument("Número de argumentos excede o limite");
 
         for (int i = 1; i<argc; i++){
-
-            cont_line = 1;
             file_name = argv[i];
             Program prog(file_name);
 
@@ -30,7 +29,7 @@ int main(int argc, char** argv){
             while(getline(input, line)){
                 Line parsed_line = parse_line(line);
                 prog.gen_code(parsed_line);
-                cont_line++;
+                Line::cont_line++;
             }
 
             prog.check_status();
@@ -39,7 +38,7 @@ int main(int argc, char** argv){
     }	
 
     catch (const AssemblerError& e){
-        e.print(file_name, cont_line,line);
+        e.print(file_name,line);
         return 1;
     }
     catch(const std::runtime_error& e){

@@ -4,7 +4,7 @@
 void SymbolTable::insert(std::string symbol, unsigned int value ){
 
     if (defined.count(symbol))
-        throw AssemblerError("Redefinição do símbolo \""+ symbol + "\"", "Semântico");
+        throw AssemblerError("Redefinição do símbolo \""+ symbol + "\"", "Semântico",Line::cont_line);
 
     values[symbol] = value;
     defined.insert(symbol);
@@ -21,13 +21,13 @@ void Program::gen_code(Line line)
 
     else if (line.is_instruction()){
         if (text_begin==-1)
-            throw AssemblerError("Instrução executada fora da seção TEXT", "Semântico");
+            throw AssemblerError("Instrução executada fora da seção TEXT", "Semântico",Line::cont_line);
         process_instruction(line);
 
     }
     else if (line.is_data_directive()){
         if (data_begin==-1 || (data_end != -1 && (int) code.size() > data_end ))
-            throw AssemblerError("Dado definido fora da seção DATA", "Semântico");
+            throw AssemblerError("Dado definido fora da seção DATA", "Semântico",Line::cont_line);
         process_data_directive(line);
     }
     else if(line.is_linking_directive())
@@ -47,7 +47,7 @@ void Program::process_linking_directive(Line line){
 	}
 	else if(line.cmd.text == "END"){
         if (not has_begin)
-			throw AssemblerError("Diretiva END não possui BEGIN correspondente", "Semântico");
+			throw AssemblerError("Diretiva END não possui BEGIN correspondente", "Semântico",Line::cont_line);
         else
             has_end = true;
 	}
@@ -55,7 +55,7 @@ void Program::process_linking_directive(Line line){
 
 void Program::process_public(Line line){
 	if(!has_begin)
-		 throw AssemblerError("Diretiva PUBLIC pode ser utilizada apenas em módulos", "Semântico");
+		 throw AssemblerError("Diretiva PUBLIC pode ser utilizada apenas em módulos", "Semântico",Line::cont_line);
     auto arg = line.args[0].text;
     def_table[arg] = 0;
 
@@ -63,7 +63,7 @@ void Program::process_public(Line line){
 
 void Program::process_extern(Line line){
 	if(!has_begin)
-		 throw AssemblerError("Diretiva EXTERN pode ser utilizada apenas em módulos", "Semântico");
+		 throw AssemblerError("Diretiva EXTERN pode ser utilizada apenas em módulos", "Semântico",Line::cont_line);
     auto arg = line.args[0].text;
     use_table.insert({arg, {}});
 }
@@ -130,11 +130,11 @@ void Program::process_identifier(Token id, Token cmd){
         // atualiza lista de pendencias
         value = symb_table.to_do_list[label];
         symb_table.to_do_list[label] = code.size();
-        symb_table.to_do_list_info[label].push_back(cmd.text);
+        symb_table.to_do_list_info[label].push_back(std::make_pair(cmd.text, Line::cont_line));
     }
     // se o identificador está contido na tabela de símbolos
     else {
-        value = symb_table.values[label];
+        value = symb_table.values[label]+offset_table[code.size()];
     }
 
     relatives.push_back(code.size());
@@ -239,12 +239,11 @@ void Program::check_pendencies(){
     for (auto e : symb_table.to_do_list_info){
         auto label = e.first;
         for (auto instruction : e.second){
-            std::cout<<instruction<<std::endl;
-            bool uses_data = check_uses_data(instruction);
+            bool uses_data = check_uses_data(instruction.first);
             std:: string label_type = uses_data ? "Dado " : "Rótulo ";
             std:: string section_type = uses_data ? "DATA" : "TEXT";
             std::string msg = label_type + label + " não foi definido na seção "+ section_type ;
-            throw AssemblerError(msg, "Semântico");
+            throw AssemblerError(msg, "Semântico",instruction.second);
         }
     }
 }
@@ -256,7 +255,7 @@ bool Program::check_uses_data(std::string instruction){
 
 void Program::check_section_text(){
     if( text_begin == -1)
-        throw AssemblerError("Seção TEXT faltante", "Semântico");
+        throw AssemblerError("Seção TEXT faltante", "Semântico",Line::cont_line);
         
 }
 
@@ -265,8 +264,8 @@ void Program::check_status(){
     check_section_text();
 	if(has_begin ^ has_end){
 		if(has_begin)
-			throw AssemblerError("Diretiva BEGIN não possui END correspondente", "Semântico");
+			throw AssemblerError("Diretiva BEGIN não possui END correspondente", "Semântico",Line::cont_line);
 		else
-			throw AssemblerError("Diretiva END não possui BEGIN correspondente", "Semântico");
+			throw AssemblerError("Diretiva END não possui BEGIN correspondente", "Semântico",Line::cont_line);
 	}
 }

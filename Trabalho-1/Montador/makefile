@@ -24,7 +24,7 @@ obj/%.o:$(CODEDIR)/%.cpp $(INCS)
 	$(CC) $(FLAGS) -c $< -o $@
 
 run: $(BINARY)
-	./montador mod1 mod2 mod3 mod4
+	./montador bin
 
 clear:
 	rm $(OBJFILES)

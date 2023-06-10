@@ -7,6 +7,7 @@ struct Line {
   std::string label;
   Token cmd;
   std::vector<Token> args;
+  static int cont_line;
   Line(std::string label,
        Token cmd,
        std::vector<Token> args): label(label), cmd(cmd), args(args) {}

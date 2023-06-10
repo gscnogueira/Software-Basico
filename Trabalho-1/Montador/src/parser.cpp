@@ -73,66 +73,66 @@ bool not_is_identifier_operand(Token token){
 
 void process_line(int i,int limit,std::vector<Token> tokens){
 	if(tokens[i].type != 1||tokens[i].text == "+"){
-	  throw AssemblerError("Começo invalido de instrução", "Sintático");
+	  throw AssemblerError("Começo invalido de instrução", "Sintático",Line::cont_line);
 	}
 	if(tokens[i].text == "SECTION"){
 		// precisa ser seguido da palavra reservada DATA ou TEXT
 		if(limit-i != 2||(tokens[i+1].text != "DATA"&&tokens[i+1].text != "TEXT")){
-		  throw AssemblerError("Erro na diretiva SECTION", "Sintático");
+		  throw AssemblerError("Erro na diretiva SECTION", "Sintático",Line::cont_line);
 		}
 	}
 	else if(tokens[i].text == "EXTERN:"){
 		// precisa ser seguido de um rotulo sem ser declaração
 		if(limit-i != 2||not_is_identifier_op(tokens[i+1])){
-		  throw AssemblerError("Erro na diretiva EXTERN", "Sintático");
+		  throw AssemblerError("Erro na diretiva EXTERN", "Sintático",Line::cont_line);
 		}
 	}
 	else if(tokens[i].text == "PUBLIC"){
 		// precisa ser seguido de rotulo
 		if(limit-i != 2||not_is_identifier_op(tokens[i+1])){
-		  throw AssemblerError("Erro na diretiva PUBLIC", "Sintático");
+		  throw AssemblerError("Erro na diretiva PUBLIC", "Sintático",Line::cont_line);
 		}
 	}
 	else if(tokens[i].text == "BEGIN"){
 		if(limit-i != 1){
-		  throw AssemblerError("Erro na diretiva BEGIN", "Sintático");
+		  throw AssemblerError("Erro na diretiva BEGIN", "Sintático",Line::cont_line);
 		}
 	}
 	else if(tokens[i].text == "END"){
 		if(limit-i != 1){
-		  throw AssemblerError("Erro na diretiva END", "Sintático");
+		  throw AssemblerError("Erro na diretiva END", "Sintático",Line::cont_line);
 		}
 	}
 	else if(tokens[i].text == "SPACE"){
 		// pode aceitar argumento
 		if(limit-i > 2){
-		  throw AssemblerError("Erro na quantidade de operadores da diretiva SPACE", "Sintático");
+		  throw AssemblerError("Erro na quantidade de operadores da diretiva SPACE", "Sintático",Line::cont_line);
 		} else if(limit-i == 2&&(tokens[i+1].type != 2||std::stoi(tokens[i+1].text) <= 0)){
-		  throw AssemblerError("Erro na constante da diretiva SPACE", "Sintático");
+		  throw AssemblerError("Erro na constante da diretiva SPACE", "Sintático",Line::cont_line);
 		}
 	}
 	else if(tokens[i].text == "CONST"){
 		// precisa ter uma constante depois
 		if(limit-i != 2||tokens[i+1].type != 2){
-		  throw AssemblerError("Erro na diretiva CONST", "Sintático");
+		  throw AssemblerError("Erro na diretiva CONST", "Sintático",Line::cont_line);
 		}
 	}
 	else if(tokens[i].text == "STOP"){
 		// não pode ter nada depois dele
 		if(limit-i != 1){
-		  throw AssemblerError("Erro na instrução stop", "Sintático");
+		  throw AssemblerError("Erro na instrução stop", "Sintático",Line::cont_line);
 		}
 	}
 	else if(tokens[i].text == "COPY"){
 		if(assert_copy(i,limit,tokens))
 		{
-		  throw AssemblerError("Erro nos operadores da instrução binaria", "Sintático");
+		  throw AssemblerError("Erro nos operadores da instrução binaria", "Sintático",Line::cont_line);
 		}
 	}
 	else if(validInstructionsOneOperand.count(tokens[i].text)){
 		// aqui eu agrupei as instruções que tem a sintaxe igual
 		if(assert_inst(i,limit,tokens)){
-		  throw AssemblerError("Erro nos operadores da instrução unaria", "Sintático");
+		  throw AssemblerError("Erro nos operadores da instrução unaria", "Sintático",Line::cont_line);
 		}
 	}
 }
@@ -146,7 +146,7 @@ Line parse_line(std::string line){
   int i = 0;
   for(i = 0;i < limit;++i){
     if(labels >= 2){
-      throw AssemblerError("Mais de uma label na linha", "Sintático");
+      throw AssemblerError("Mais de uma label na linha", "Sintático",Line::cont_line);
     }
     //pulando as labels das instruções
     if(tokens[i].text[tokens[i].text.size()-1] == ':'&&!tokens[i].type){
@@ -160,6 +160,5 @@ Line parse_line(std::string line){
     break;
   }
 	std::vector<Token> args(tokens.begin()+i+1, tokens.end());
-
   return Line(label,cmd,args);
 }

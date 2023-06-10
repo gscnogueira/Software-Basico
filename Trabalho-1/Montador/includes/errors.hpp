@@ -5,17 +5,14 @@
 
 class AssemblerError : public std::runtime_error{
 public:
-  AssemblerError(const std::string& mensagem, std::string error_type) : std::runtime_error(mensagem), type(error_type){}
-
+  AssemblerError(const std::string& mensagem, std::string error_type,int _line);
   inline std::string get_type() const
   {
     return type;
   }
 
-  void print(std::string f_name, unsigned int line_number, std::string line) const;
-
+  void print(std::string f_name, std::string line) const;
 private:
-  std::string type;
-
-
+	std::string type;
+	int cont_line;
 };
