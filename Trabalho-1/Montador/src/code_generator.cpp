@@ -271,8 +271,6 @@ void Program::align_sections(){
 
     int data_size = data_end - data_begin;
     int offset = code.size() - data_size;
-    std::cout<<data_size<<std::endl;
-    std::cout<<offset<<std::endl;
 
     // atualiza tabela de símbolos
     for (auto &e: symb_table.values){
