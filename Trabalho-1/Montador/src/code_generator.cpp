@@ -1,5 +1,6 @@
 #include <code_generator.hpp>
 #include <iostream>
+#include <algorithm>
 
 void SymbolTable::insert(std::string symbol, unsigned int value ){
 
@@ -15,6 +16,8 @@ void Program::gen_code(Line line)
     if(line.has_label_declaration()){
         symb_table.insert(line.label, code.size());
         resolve_label(line.label);
+        if(line.is_data_directive())
+            data_identifiers.insert(line.label);
     }
     if (line.is_section())
         process_section(line);
@@ -137,6 +140,9 @@ void Program::process_identifier(Token id, Token cmd){
         value = symb_table.values[label];
     }
 
+    if(data_identifiers.count(label))
+        data_positions.push_back(code.size());
+
     relatives.push_back(code.size());
     code.push_back(value);
 }
@@ -239,7 +245,6 @@ void Program::check_pendencies(){
     for (auto e : symb_table.to_do_list_info){
         auto label = e.first;
         for (auto instruction : e.second){
-            std::cout<<instruction<<std::endl;
             bool uses_data = check_uses_data(instruction);
             std:: string label_type = uses_data ? "Dado " : "Rótulo ";
             std:: string section_type = uses_data ? "DATA" : "TEXT";
@@ -260,9 +265,46 @@ void Program::check_section_text(){
         
 }
 
+void Program::align_sections(){
+    if (text_begin < data_begin  or data_begin == -1)
+        return ;
+
+    int data_size = data_end - data_begin;
+    int offset = code.size() - data_size;
+    std::cout<<data_size<<std::endl;
+    std::cout<<offset<<std::endl;
+
+    // atualiza tabela de símbolos
+    for (auto &e: symb_table.values){
+        if(data_identifiers.find(e.first)!=data_identifiers.end())
+            e.second += offset;
+        else
+            e.second -= data_size;
+    }
+
+    // atualiza tabela de uso
+    for (auto &m : use_table){
+        for(auto &e : m.second)
+            e-=data_size;
+    }
+
+    // atualiza código
+    for (auto e: data_positions)
+        code[e]+=offset;
+
+    //atualiza relativos 
+    for (auto& e: relatives)
+        e-=data_size;
+
+
+    std::rotate(code.begin(), code.begin()+data_size, code.end());
+
+    return;
+}
 void Program::check_status(){
     check_pendencies();
     check_section_text();
+    align_sections();
 	if(has_begin ^ has_end){
 		if(has_begin)
 			throw AssemblerError("Diretiva BEGIN não possui END correspondente", "Semântico");

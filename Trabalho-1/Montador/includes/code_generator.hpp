@@ -29,6 +29,8 @@ struct Program {
     std::vector<int> code;
 	std::map<unsigned int,int> offset_table;
     std::vector<int> relatives;
+    std::vector<int> data_positions;
+    std::set<std::string> data_identifiers;
 
 	bool has_begin = false;
 	bool has_end = false;
@@ -60,5 +62,6 @@ private:
     void update_def_table();
     void write_exc();
     void write_obj();
+    void align_sections();
 };
 
