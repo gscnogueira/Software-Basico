@@ -17,6 +17,7 @@ struct Module
   std::string nome;
   use_table tabela_de_uso;
   def_table tabela_de_definicoes;
+
   std::vector<uint>relativos;
   std::vector<uint>code;
 
@@ -30,10 +31,9 @@ struct Module
   void write_exec();
 };
 
-Module link(Module mod_a, Module mod_b);
+Module link(Module mod_a, Module mod_b, def_table g_dt);
 
-def_table gen_global_definition_table(Module a,
-				      Module b);
+def_table gen_global_definition_table(std::vector<Module> modules);
 
 std::vector<uint> apply_use_table(Module m,
 				  def_table g_dt,
