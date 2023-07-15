@@ -14,5 +14,8 @@ $(BINARY):$(OBJFILES)
 %.o:%.asm
 	$(NASM) $(NASM_FLAGS) -o $@ $^
 
+run:$(BINARY)
+	./calculadora
+
 
 
