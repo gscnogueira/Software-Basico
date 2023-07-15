@@ -98,6 +98,7 @@ global show_result_msg
 
 extern sum
 extern _sub
+extern _mul
 
 _start:
 	call setup_calculator
@@ -311,22 +312,19 @@ execute_operation:
 	jne jmp_add
 	call sum
 	jmp end_operation
+
 jmp_add:
 	cmp al, 2
 	jne jmp_sub
     call _sub
     jmp end_operation
 	
-	;implementar operação de subtração
-	
-	jmp end_operation
 jmp_sub:
 	cmp al, 3
 	jne jmp_mul
-	
-	;implementar operação de multiplicação
-	
+    call _mul
 	jmp end_operation
+
 jmp_mul:
 	cmp al, 4
 	jne jmp_div
