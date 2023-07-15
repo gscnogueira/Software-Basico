@@ -93,6 +93,7 @@ global size_new_line
 global overflow_treatment
 
 extern sum
+extern _sub
 
 _start:
 	call setup_calculator
@@ -309,6 +310,8 @@ execute_operation:
 jmp_add:
 	cmp al, 2
 	jne jmp_sub
+    call _sub
+    jmp end_operation
 	
 	;implementar operação de subtração
 	
@@ -343,7 +346,19 @@ jmp_exp:
 	jmp end_operation
 jmp_mod:
 	jmp terminate_program
+
+terminate_program:
+	mov eax, 1
+	mov ebx, 0
+	int 80h
+
 end_operation:
+	push message10
+	push size_message10
+	call output_message
+	push new_line
+	push size_new_line
+	call output_message
 	ret
 overflow_treatment:
 	push message9
@@ -354,7 +369,3 @@ overflow_treatment:
 	call output_message
 	jmp terminate_program
 
-terminate_program:
-	mov eax, 1
-	mov ebx, 0
-	int 80h
