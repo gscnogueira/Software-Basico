@@ -92,6 +92,10 @@ global new_line
 global size_new_line
 global overflow_treatment
 
+global get_op1
+global get_op2
+global show_result_msg
+
 extern sum
 extern _sub
 
@@ -360,6 +364,7 @@ end_operation:
 	push size_new_line
 	call output_message
 	ret
+
 overflow_treatment:
 	push message9
 	push size_message9
@@ -368,4 +373,42 @@ overflow_treatment:
 	push size_new_line
 	call output_message
 	jmp terminate_program
+
+get_op1:    
+    push message6
+    push size_message6
+    call output_message
+
+    push new_line
+    push size_new_line
+    call output_message
+
+    call input_number_32_bits
+
+    ret
+
+get_op2:    
+    push message7
+    push size_message7
+    call output_message
+
+    push new_line
+    push size_new_line
+    call output_message
+
+    call input_number_32_bits
+
+    ret
+
+show_result_msg:    
+    push message8
+    push size_message8
+    call output_message
+
+    push new_line
+    push size_new_line
+    call output_message
+
+    ret
+
 
