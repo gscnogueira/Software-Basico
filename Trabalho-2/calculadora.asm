@@ -100,6 +100,7 @@ extern sum
 extern _sub
 extern _mul
 extern _div
+extern _exp
 
 _start:
 	call setup_calculator
@@ -335,10 +336,9 @@ jmp_mul:
 jmp_div:
 	cmp al, 5
 	jne jmp_exp
-	
-	;implementar operação de exponenciação
-	
+    call _exp
 	jmp end_operation
+
 jmp_exp:
 	cmp al, 6
 	jne jmp_mod
