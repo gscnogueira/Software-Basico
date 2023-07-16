@@ -99,6 +99,7 @@ global show_result_msg
 extern sum
 extern _sub
 extern _mul
+extern _div
 
 _start:
 	call setup_calculator
@@ -328,10 +329,9 @@ jmp_sub:
 jmp_mul:
 	cmp al, 4
 	jne jmp_div
-	
-	;implementar operação de divisão
-	
+	call _div
 	jmp end_operation
+
 jmp_div:
 	cmp al, 5
 	jne jmp_exp
