@@ -101,6 +101,7 @@ extern _sub
 extern _mul
 extern _div
 extern _exp
+extern _mod
 
 _start:
 	call setup_calculator
@@ -342,10 +343,9 @@ jmp_div:
 jmp_exp:
 	cmp al, 6
 	jne jmp_mod
-
-	;implementar operação de modulo
-	
+    call _mod
 	jmp end_operation
+
 jmp_mod:
 	jmp terminate_program
 
