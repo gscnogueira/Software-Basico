@@ -91,7 +91,8 @@ extern sub_16
 extern sub_32
 extern mul_16
 extern mul_32
-extern _div
+extern div_16
+extern div_32
 extern _exp
 extern _mod
 
@@ -438,7 +439,16 @@ jmp_mul_32:
 jmp_div:
 	cmp al, 4
 	jne jmp_exp
-	call _div
+
+	mov eax, [response_precision]
+	sub eax, 30h
+	cmp byte al,0
+	jne jmp_div_32
+	call div_16
+	jmp end_operation
+
+jmp_div_32: 
+	call div_32
 	jmp end_operation
 
 jmp_exp:
