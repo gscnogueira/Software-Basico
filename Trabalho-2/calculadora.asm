@@ -85,8 +85,8 @@ global get_op1
 global get_op2
 global show_result_msg
 
-extern sum_32_bits
-extern sum_16_bits
+extern sum_32
+extern sum_16
 extern _sub
 extern _mul
 extern _div
@@ -387,47 +387,50 @@ execute_operation:
 	mov eax, [response_menu_option]
 	sub eax, 30h
 	cmp byte al, 1
-	jne jmp_add
+	jne jmp_sub
 	mov eax, [response_precision]
 	sub eax, 30h
+
 	cmp byte al,0
-	jne jmp_sum_16
-	call sum_16_bits
+	jne jmp_sum_32
+	call sum_16
 	jmp end_operation
-jmp_sum_16:
-	call sum_32_bits
+
+jmp_sum_32:
+	call sum_32
 	jmp end_operation
-jmp_add:
+
+jmp_sub:
 	cmp al, 2
-	jne jmp_sub
+	jne jmp_mul
     call _sub
     jmp end_operation
 	
-jmp_sub:
+jmp_mul:
 	cmp al, 3
-	jne jmp_mul
+	jne jmp_div
     call _mul
 	jmp end_operation
 
-jmp_mul:
+jmp_div:
 	cmp al, 4
-	jne jmp_div
+	jne jmp_exp
 	call _div
 	jmp end_operation
 
-jmp_div:
+jmp_exp:
 	cmp al, 5
-	jne jmp_exp
+	jne jmp_mod
     call _exp
 	jmp end_operation
 
-jmp_exp:
+jmp_mod:
 	cmp al, 6
-	jne jmp_mod
+	jne jmp_sair
     call _mod
 	jmp end_operation
 
-jmp_mod:
+jmp_sair:
 	jmp terminate_program
 
 terminate_program:

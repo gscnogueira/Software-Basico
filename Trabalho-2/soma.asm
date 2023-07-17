@@ -1,7 +1,7 @@
 section .text
 
-global sum_32_bits
-global sum_16_bits
+global sum_32
+global sum_16
 
 extern get_op1
 extern get_op2
@@ -10,7 +10,7 @@ extern print_number_32_bits
 extern print_number_16_bits
 extern overflow_treatment
 
-sum_32_bits:
+sum_32:
 	enter 4,0
 
 	call get_op1
@@ -30,7 +30,7 @@ sum_32_bits:
 	leave
 	ret
 
-sum_16_bits:
+sum_16:
 	enter 2,0
 
 	call get_op1
