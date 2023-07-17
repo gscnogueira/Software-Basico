@@ -1,61 +1,51 @@
 section .text
 
-global sum
+global sum_32_bits
+global sum_16_bits
 
-extern input_number_32_bits
-extern output_message
-extern message6
-extern message7
-extern message8
-extern message10
-extern size_message6
-extern size_message7
-extern size_message8
-extern size_message10
-extern new_line
-extern size_new_line
+extern get_op1
+extern get_op2
+extern show_result_msg
 extern print_number_32_bits
+extern print_number_16_bits
 extern overflow_treatment
 
-sum:
+sum_32_bits:
 	enter 4,0
 
-	push message6
-	push size_message6
-	call output_message
+	call get_op1
+    mov dword [ebp-4], eax
 
-	push new_line
-	push size_new_line
-	call output_message
+    call get_op2
+    add dword [ebp-4], eax
 
-	call input_number_32_bits
-	mov dword [ebp-4], eax
+    jo overflow_treatment
 
-	push message7
-	push size_message7
-	call output_message
+    call show_result_msg
 
-	push new_line
-	push size_new_line
-	call output_message
+    mov dword eax, [ebp-4]
+    push eax
+    call print_number_32_bits
 
-	call input_number_32_bits	
-	add dword eax, [ebp-4]
+	leave
+	ret
 
-	jo overflow_treatment
+sum_16_bits:
+	enter 2,0
 
-	mov dword [ebp-4], eax 
-	push message8
-	push size_message8
-	call output_message
+	call get_op1
+    mov word [ebp-2], ax
 
-	push new_line
-	push size_new_line
-	call output_message
+    call get_op2
+    add word [ebp-2], ax
 
-	mov dword eax, [ebp-4]
-	push eax
-	call print_number_32_bits
+    jo overflow_treatment
+
+    call show_result_msg
+
+    mov word ax, [ebp-2]
+    push ax
+    call print_number_16_bits
 
 	leave
 	ret

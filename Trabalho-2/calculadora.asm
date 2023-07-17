@@ -77,26 +77,16 @@ response_menu_option resb size_response_menu_option
 section .text
 
 global _start
-global input_number_32_bits
 global print_number_32_bits
-global output_message
-global message6
-global message7
-global message8
-global message10
-global size_message6
-global size_message7
-global size_message8
-global size_message10
-global new_line
-global size_new_line
+global print_number_16_bits
 global overflow_treatment
 
 global get_op1
 global get_op2
 global show_result_msg
 
-extern sum
+extern sum_32_bits
+extern sum_16_bits
 extern _sub
 extern _mul
 extern _div
@@ -200,6 +190,91 @@ end_read_loop:
 jmp_convert_neg:
 	leave 					; desaloca espaço para as variaveis locais
 	ret 					; retorna para a função que chamou
+
+input_number_16_bits:
+	enter 4,0				
+	mov word [ebp-2], 0		
+	mov byte [ebp-4], 0		
+	lea ecx, [ebp-3]		
+	mov edx, 1				
+read_loop2:
+	mov eax, 3				
+	mov ebx, 0				
+	int 080h				
+	cmp byte [ebp-3], 10	
+	je 	end_read_loop2		
+	cmp byte [ebp-3], 45	
+	jne jump_flag_neg_input2
+	mov	byte [ebp-4], 1		
+	jmp read_loop2			
+jump_flag_neg_input2:
+	shl word [ebp-2], 1   	
+	mov word ax, [ebp-2] 	
+	shl word [ebp-2], 2   	
+	add word [ebp-2], ax 	
+	mov	byte bl, [ebp-3]	
+	sub byte bl, 030h		
+	add word [ebp-2], bx	
+	jmp read_loop2			
+end_read_loop2:
+	mov ax, [ebp-2] 		
+	cmp byte [ebp-4], 1		
+	jne jmp_convert_neg2	
+	sub ax, 1				
+	xor ax, 0FFFFh			
+jmp_convert_neg2:
+	leave
+	ret
+
+print_number_16_bits:
+	enter 1,0
+	mov ax, [ebp+8]
+	mov cx, ax
+	and cx, 08000h
+	cmp cx,0
+	mov byte [ebp-1],0		
+	je jump_flag_neg_print2	
+	xor ax, 0FFFFh
+	add ax, 1
+	mov byte [ebp-1],1
+jump_flag_neg_print2:
+	mov bx, 10
+	xor ecx, ecx
+Loop_transform_to_ascii2:
+	xor edx, edx
+	div bx
+	add dx, 030h
+	dec ecx
+	dec	esp
+	mov byte [ebp-1+ecx], dl
+	cmp ax, 0
+	je	end_transform_to_ascii2
+	jmp Loop_transform_to_ascii2
+end_transform_to_ascii2:
+	mov	esi, ecx
+	cmp byte [ebp-1], 0
+	je Loop_print_number_16_bits
+	mov byte [ebp-1], 45
+	mov eax, 4
+	mov ebx, 1
+	lea	ecx, [ebp-1]
+	mov edx, 1
+	int 080h
+Loop_print_number_16_bits:
+	mov eax, 4
+	mov ebx, 1
+	lea	ecx, [ebp-1+esi]
+	mov edx, 1
+	int 080h
+	inc esi
+	inc esp
+	cmp esi, 0 
+	jne Loop_print_number_16_bits
+	push new_line
+	push size_new_line
+	call output_message
+	leave
+	ret 2
 
 ; Converte um número decimal de 32 bits em caracteres 
 ; e imprime no terminal seguida da impressão de uma linha
@@ -313,9 +388,15 @@ execute_operation:
 	sub eax, 30h
 	cmp byte al, 1
 	jne jmp_add
-	call sum
+	mov eax, [response_precision]
+	sub eax, 30h
+	cmp byte al,0
+	jne jmp_sum_16
+	call sum_16_bits
 	jmp end_operation
-
+jmp_sum_16:
+	call sum_32_bits
+	jmp end_operation
 jmp_add:
 	cmp al, 2
 	jne jmp_sub
@@ -361,6 +442,9 @@ end_operation:
 	push new_line
 	push size_new_line
 	call output_message
+	push name_user
+	push size_name_user
+	call input_message 
 	ret
 
 overflow_treatment:
@@ -380,9 +464,15 @@ get_op1:
     push new_line
     push size_new_line
     call output_message
-
-    call input_number_32_bits
-
+	mov eax, [response_precision]
+	sub eax, 30h
+	cmp byte al,0
+    jne jmp_op1_input_16_bits
+	call input_number_16_bits
+	jmp end_op1
+jmp_op1_input_16_bits:
+	call input_number_32_bits
+end_op1:
     ret
 
 get_op2:    
@@ -393,9 +483,15 @@ get_op2:
     push new_line
     push size_new_line
     call output_message
-
-    call input_number_32_bits
-
+	mov eax, [response_precision]
+	sub eax, 30h
+	cmp byte al,0
+    jne jmp_op2_input_16_bits
+	call input_number_16_bits
+	jmp end_op2
+jmp_op2_input_16_bits:
+	call input_number_32_bits
+end_op2:
     ret
 
 show_result_msg:    
