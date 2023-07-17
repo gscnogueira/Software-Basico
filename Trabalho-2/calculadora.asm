@@ -85,9 +85,10 @@ global get_op1
 global get_op2
 global show_result_msg
 
-extern sum_32
 extern sum_16
-extern _sub
+extern sum_32
+extern sub_16
+extern sub_32
 extern _mul
 extern _div
 extern _exp
@@ -388,11 +389,12 @@ execute_operation:
 	sub eax, 30h
 	cmp byte al, 1
 	jne jmp_sub
+
 	mov eax, [response_precision]
 	sub eax, 30h
-
 	cmp byte al,0
 	jne jmp_sum_32
+
 	call sum_16
 	jmp end_operation
 
@@ -403,8 +405,18 @@ jmp_sum_32:
 jmp_sub:
 	cmp al, 2
 	jne jmp_mul
-    call _sub
+
+	mov eax, [response_precision]
+	sub eax, 30h
+	cmp byte al,0
+	jne jmp_sub_32
+
+    call sub_16
     jmp end_operation
+
+jmp_sub_32:
+	call sub_32
+	jmp end_operation
 	
 jmp_mul:
 	cmp al, 3
