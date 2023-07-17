@@ -93,7 +93,8 @@ extern mul_16
 extern mul_32
 extern div_16
 extern div_32
-extern _exp
+extern exp_16
+extern exp_32
 extern _mod
 
 _start:
@@ -454,7 +455,17 @@ jmp_div_32:
 jmp_exp:
 	cmp al, 5
 	jne jmp_mod
-    call _exp
+
+	mov eax, [response_precision]
+	sub eax, 30h
+	cmp byte al,0
+	jne jmp_exp_32
+
+	call exp_16
+	jmp end_operation
+
+jmp_exp_32: 
+    call exp_32
 	jmp end_operation
 
 jmp_mod:
