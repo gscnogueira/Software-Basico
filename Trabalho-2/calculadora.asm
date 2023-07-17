@@ -95,7 +95,8 @@ extern div_16
 extern div_32
 extern exp_16
 extern exp_32
-extern _mod
+extern mod_16
+extern mod_32
 
 _start:
 	call setup_calculator
@@ -471,7 +472,17 @@ jmp_exp_32:
 jmp_mod:
 	cmp al, 6
 	jne jmp_sair
-    call _mod
+
+	mov eax, [response_precision]
+	sub eax, 30h
+	cmp byte al,0
+	jne jmp_mod_32
+
+	call mod_16
+	jmp end_operation
+
+jmp_mod_32: 
+	call mod_32
 	jmp end_operation
 
 jmp_sair:
